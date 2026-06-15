@@ -1,187 +1,172 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Compass, User, LogOut, Menu, X, ArrowRight, Layers } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Compass, Menu, X } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    // Get current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    document.cookie = "wayfinder-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    window.location.href = "/";
-  }
+  const navLinks = [
+    { name: "Comparar", href: "/compare" },
+    { name: "Dashboard", href: "/dashboard" },
+  ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm transition-transform group-hover:scale-105">
-            <Compass className="h-5 w-5" />
+    <nav className="sticky top-0 z-50 w-full bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Left Side: Logo */}
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          {/* Tenta carregar logo, fallback para ícone Lucide */}
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--brand-subtle)] shrink-0">
+            <img
+              src="/images/logo-icon.png"
+              alt=""
+              className="h-7 w-7 object-contain rounded-lg"
+              onError={(e) => {
+                // Esconde imagem se não carregar
+                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement)
+                  .nextElementSibling
+                  ?.removeAttribute('hidden');
+              }}
+            />
+            <Compass
+              {...({ hidden: true } as any)}
+              className="h-4 w-4 text-[var(--brand)]"
+            />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-semibold tracking-tight text-gray-900">
-              WayFinder
-            </span>
-            <span className="text-[10px] font-medium text-gray-500 -mt-1 tracking-wider uppercase">
-              Explore. Plan. Go.
-            </span>
-          </div>
+          <span className="text-[15px] font-semibold tracking-tight text-[var(--text-primary)]">
+            wayfinder
+          </span>
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden items-center gap-8 md:flex">
-          <Link
-            href="/"
-            className="text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
-          >
-            Início
-          </Link>
-          <Link
-            href="/compare"
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
-          >
-            <Layers className="h-4 w-4" />
-            Comparar Países
-          </Link>
-          {user && (
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
-            >
-              Favoritos
-            </Link>
-          )}
-        </div>
+        {/* Right Side: Links & Auth */}
+        <div className="hidden md:flex items-center gap-6">
+          {/* Nav links */}
+          <div className="flex items-center gap-6">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm ${
+                    isActive
+                      ? "text-[var(--text-primary)] font-medium"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)] font-normal transition-colors"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </div>
 
-        {/* User Account Section */}
-        <div className="hidden items-center gap-4 md:flex">
+          {/* Separator */}
+          <div className="h-4 w-px bg-[var(--border)]" />
+
+          {/* Auth */}
           {user ? (
             <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 rounded-lg bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all border border-gray-200"
-              >
-                <User className="h-4 w-4 text-blue-600" />
-                <span>{user.email?.split("@")[0]}</span>
-              </Link>
+              <span className="text-sm font-medium text-[var(--text-primary)]">
+                {profile?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+              </span>
               <button
-                onClick={handleLogout}
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 hover:bg-red-50 hover:text-red-700 transition-all text-gray-500 cursor-pointer"
-                title="Sair"
+                onClick={signOut}
+                className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
               >
-                <LogOut className="h-4 w-4" />
+                Sair
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
                 Entrar
               </Link>
               <Link
                 href="/register"
-                className="flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-sm font-medium transition-colors"
+                className="text-sm font-medium text-white px-4 py-1.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors"
               >
-                <span>Criar Conta</span>
-                <ArrowRight className="h-4 w-4" />
+                Começar
               </Link>
             </div>
           )}
         </div>
 
-        {/* Mobile menu trigger */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 md:hidden text-gray-700"
-        >
-          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        {/* Mobile menu button */}
+        <div className="flex md:hidden">
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="text-[var(--text-primary)] hover:text-[var(--brand)] p-1"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile menu content */}
-      {menuOpen && (
-        <div className="absolute top-[73px] left-0 w-full bg-white border-b border-gray-200 px-6 py-6 flex flex-col gap-5 md:hidden animate-fade-in-up">
-          <Link
-            href="/"
-            onClick={() => setMenuOpen(false)}
-            className="text-base font-medium text-gray-700 hover:text-blue-600"
-          >
-            Início
-          </Link>
-          <Link
-            href="/compare"
-            onClick={() => setMenuOpen(false)}
-            className="text-base font-medium text-gray-700 hover:text-blue-600"
-          >
-            Comparar Países
-          </Link>
-          {user && (
-            <Link
-              href="/dashboard"
-              onClick={() => setMenuOpen(false)}
-              className="text-base font-medium text-gray-700 hover:text-blue-600"
-            >
-              Favoritos
-            </Link>
-          )}
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-4 flex flex-col gap-4 shadow-sm">
+          <div className="flex flex-col gap-3">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-sm ${
+                    isActive
+                      ? "text-[var(--text-primary)] font-medium"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)] font-normal transition-colors"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </div>
 
-          <hr className="border-gray-100" />
+          <div className="h-px w-full bg-[var(--border-subtle)]" />
 
           {user ? (
             <div className="flex flex-col gap-3">
-              <div className="text-sm text-gray-500 px-2">
-                Sessão iniciada como: <span className="font-semibold text-gray-800">{user.email}</span>
-              </div>
+              <span className="text-sm font-medium text-[var(--text-primary)]">
+                {profile?.full_name || user.email}
+              </span>
               <button
                 onClick={() => {
-                  setMenuOpen(false);
-                  handleLogout();
+                  setMobileOpen(false);
+                  signOut();
                 }}
-                className="flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-100 transition-all cursor-pointer"
+                className="text-left text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
               >
-                <LogOut className="h-4 w-4" />
-                <span>Sair da Conta</span>
+                Sair
               </button>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
               <Link
                 href="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center rounded-lg border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                onClick={() => setMobileOpen(false)}
+                className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
                 Entrar
               </Link>
               <Link
                 href="/register"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 py-3 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                onClick={() => setMobileOpen(false)}
+                className="text-sm font-medium text-white px-4 py-1.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] text-center transition-colors"
               >
-                <span>Criar Conta</span>
-                <ArrowRight className="h-4 w-4" />
+                Começar
               </Link>
             </div>
           )}

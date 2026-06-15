@@ -85,11 +85,11 @@ export default function DashboardPage() {
 
   // Map travel styles to display badges with emojis
   const travelStyleMap: Record<string, string> = {
-    "Turismo": "🧳 Turismo",
-    "Trabalho": "💼 Trabalho",
-    "Estudos": "🎓 Estudos",
-    "Emigração": "🌍 Emigração",
-    "Nómada Digital": "💻 Nómada Digital",
+    "Turismo": "Turismo",
+    "Trabalho": "Trabalho",
+    "Estudos": "Estudos",
+    "Emigração": "Emigração",
+    "Nómada Digital": "Nómada Digital",
   };
 
   const travelStyleLabel = preferences?.preferred_travel_style

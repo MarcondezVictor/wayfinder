@@ -2,50 +2,51 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { CountrySchema } from "@/lib/countries-data";
+import { CountrySchema, countriesData as ALL_COUNTRIES } from "@/lib/countries-data";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 
 interface InteractiveMapProps {
-  countries: CountrySchema[];
+  countries?: CountrySchema[];
 }
 
-export default function InteractiveMap({ countries }: InteractiveMapProps) {
+const COUNTRY_COLORS: Record<string, string> = {
+  "PT": "#1A6B5A", "BR": "#2D6A4F", "UA": "#1A5276",
+  "FR": "#5B2C6F", "ES": "#922B21", "US": "#1F618D",
+  "JP": "#A04000", "GB": "#1A3A5C", "IT": "#1E8449",
+  "SG": "#7D3C98", "IL": "#2E86C1", "AE": "#B7770D",
+  "MA": "#BA4A00", "ZA": "#1D8348", "EG": "#C0392B",
+  "AU": "#0E6655", "NZ": "#154360", "SE": "#2874A6",
+  "CL": "#6C3483", "IS": "#2471A3",
+};
+
+export default function InteractiveMap({ countries = [] }: InteractiveMapProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Fallback to ALL_COUNTRIES if the list is empty
+  const activeCountries = countries.length > 0 ? countries : ALL_COUNTRIES;
 
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // 1. Map active countries using uppercase ISO codes
-    const activeCodes = new Set(countries.map((c) => c.isoCode.toUpperCase()));
-    const codeToSlug: Record<string, string> = {};
-    const codeToName: Record<string, string> = {};
-    const codeToFlag: Record<string, string> = {};
-
-    countries.forEach((c) => {
-      const code = c.isoCode.toUpperCase();
-      codeToSlug[code] = c.slug;
-      codeToName[code] = c.name;
-      codeToFlag[code] = c.flagEmoji;
-    });
-
-    // 2. Initialize amCharts Root element
+    // Initialize amCharts Root element
     const root = am5.Root.new(chartRef.current);
 
-    // 3. Create chart
+    // Create chart
     const chart = root.container.children.push(
       am5map.MapChart.new(root, {
-        panX: "translateX",
-        panY: "translateY",
         projection: am5map.geoNaturalEarth1(),
-        minZoomLevel: 1,
-        maxZoomLevel: 32,
+        panX: "rotateX",
+        panY: "translateY",
+        wheelY: "zoom",
+        maxZoomLevel: 8,
+        homeGeoPoint: { longitude: 10, latitude: 20 },
       })
     );
 
-    // 4. Create polygon series for the world map
+    // Create polygon series for the world map
     const polygonSeries = chart.series.push(
       am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow,
@@ -53,81 +54,100 @@ export default function InteractiveMap({ countries }: InteractiveMapProps) {
       })
     );
 
-    // 5. Configure map polygons template
-    const template = polygonSeries.mapPolygons.template;
+    // Configure map polygons template
+    polygonSeries.mapPolygons.template.setAll({
+      templateField: "polygonSettings", // reads settings from data
+      fill: am5.color("#E2E8F0"),       // default: light gray
+      stroke: am5.color("#FFFFFF"),
+      strokeWidth: 0.5,
+      interactive: true,
+    });
 
-    // Detect dark mode setting
-    const isDark = document.documentElement.classList.contains("dark");
+    // Hover state: slightly dim/darken, don't change color
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fillOpacity: 0.75,
+    });
 
-    // Dynamic fill color adapter
-    template.adapters.add("fill", (fill, target) => {
-      const dataItem = target.dataItem;
-      if (dataItem && dataItem.dataContext) {
-        const id = (dataItem.dataContext as any).id?.toUpperCase();
-        if (activeCodes.has(id)) {
-          return am5.color(0x6366F1); // Indigo-500
+    // Pass colors via data for featured countries
+    polygonSeries.data.setAll(
+      Object.entries(COUNTRY_COLORS).map(([id, color]) => ({
+        id,
+        polygonSettings: {
+          fill: am5.color(color),
+          cursorOverStyle: "pointer",
+        },
+      }))
+    );
+
+    // Click handler
+    polygonSeries.mapPolygons.template.events.on("click", (ev) => {
+      const id = (ev.target.dataItem?.dataContext as any)?.id;
+      const country = activeCountries.find((c) => c.isoCode.toUpperCase() === id?.toUpperCase());
+      if (country) {
+        router.push(`/country/${country.slug}`);
+      }
+    });
+
+    // Bullet series for small countries
+    const pointSeries = chart.series.push(
+      am5map.MapPointSeries.new(root, {})
+    );
+
+    pointSeries.bullets.push((bulletRoot, series, dataItem) => {
+      const ctx = dataItem.dataContext as any;
+      const color = COUNTRY_COLORS[ctx.id] || "#1A3055";
+
+      const circle = am5.Circle.new(bulletRoot, {
+        radius: 4,                      // PEQUENO: 4px
+        fill: am5.color(color),         // SÓLIDO: mesma cor do país
+        stroke: am5.color("#FFFFFF"),
+        strokeWidth: 1,
+        tooltipText: ctx.countryName,
+        cursorOverStyle: "pointer",
+        interactive: true,
+      });
+
+      circle.states.create("hover", {
+        radius: 6,
+        strokeWidth: 1.5,
+      });
+
+      circle.events.on("click", () => {
+        if (ctx?.slug) {
+          router.push(`/country/${ctx.slug}`);
         }
-      }
-      return isDark ? am5.color(0x52525B) : am5.color(0xD4D4D8); // zinc-600 vs zinc-300
+      });
+
+      return am5.Bullet.new(bulletRoot, { sprite: circle });
     });
 
-    // Dynamic interactivity adapter: inactive countries do not receive focus, hover, or click events
-    template.adapters.add("interactive", (interactive, target) => {
-      const dataItem = target.dataItem;
-      if (dataItem && dataItem.dataContext) {
-        const id = (dataItem.dataContext as any).id?.toUpperCase();
-        return activeCodes.has(id);
-      }
-      return false;
-    });
+    // Small countries data with coordinates
+    pointSeries.data.setAll([
+      {
+        geometry: { type: "Point", coordinates: [103.8198, 1.3521] },
+        countryName: "Singapura", slug: "singapore", id: "SG",
+      },
+      {
+        geometry: { type: "Point", coordinates: [35.2137, 31.7683] },
+        countryName: "Israel", slug: "israel", id: "IL",
+      },
+      {
+        geometry: { type: "Point", coordinates: [54.3773, 24.4764] },
+        countryName: "Emirados Árabes", slug: "united-arab-emirates",
+        id: "AE",
+      },
+    ]);
 
-    // Tooltip text adapter: only active countries display the name and flag emoji
-    template.adapters.add("tooltipText", (tooltipText, target) => {
-      const dataItem = target.dataItem;
-      if (dataItem && dataItem.dataContext) {
-        const id = (dataItem.dataContext as any).id?.toUpperCase();
-        if (activeCodes.has(id)) {
-          const name = codeToName[id];
-          const flag = codeToFlag[id];
-          return `${flag} ${name}`;
-        }
-      }
-      return "";
-    });
-
-    // Use pointer cursor over interactive countries on hover
-    template.set("cursorOverStyle", "pointer");
-
-    // Hover state color (applied only to interactive country polygons)
-    template.states.create("hover", {
-      fill: am5.color(0x818CF8), // Indigo-400
-    });
-
-    // Route navigation on country click
-    template.events.on("click", (ev) => {
-      const dataItem = ev.target.dataItem;
-      if (dataItem && dataItem.dataContext) {
-        const id = (dataItem.dataContext as any).id?.toUpperCase();
-        if (activeCodes.has(id)) {
-          const slug = codeToSlug[id];
-          router.push(`/country/${slug}`);
-        }
-      }
-    });
-
-    // 6. Add Zoom controls in the default bottom-right position
-    const zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+    // Initial animations
+    polygonSeries.appear(1000);
+    chart.appear(1000, 100);
 
     return () => {
       root.dispose();
     };
-  }, [countries, router]);
+  }, [activeCountries, router]);
 
   return (
-    <div
-      ref={chartRef}
-      className="w-full rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/30 shadow-inner"
-      style={{ height: "520px" }}
-    />
+    <div ref={chartRef} className="w-full h-full" />
   );
 }

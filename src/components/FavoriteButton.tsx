@@ -96,15 +96,15 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
   return (
     <button
       onClick={toggleFavorite}
-      className={`w-full flex items-center justify-center gap-2 rounded-lg border py-3 text-sm font-medium shadow-sm transition-all active:scale-[0.97] cursor-pointer ${
+      className={`w-full flex items-center justify-center gap-2 rounded-md border py-3 text-sm font-medium shadow-sm transition-all active:scale-[0.97] cursor-pointer bg-[var(--bg-surface)] border-[var(--border)] ${
         isFavorite
-          ? "bg-red-50 border-red-200 text-red-700"
-          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+          ? "text-[var(--danger)]"
+          : "text-[var(--text-faint)] hover:text-[var(--danger)]"
       }`}
     >
       <Heart
         className={`h-4 w-4 transition-transform duration-300 ${
-          isFavorite ? "fill-red-500 text-red-500" : ""
+          isFavorite ? "fill-[var(--danger)] text-[var(--danger)]" : ""
         } ${animating ? "scale-150 animate-bounce" : ""}`}
       />
       <span>

@@ -1,35 +1,35 @@
-import { Compass, Heart } from "lucide-react";
+import { Compass } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-gray-200 bg-white py-12 px-6 mt-auto">
+    <footer className="w-full bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] py-12 px-6 mt-auto">
       <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-6">
         
         {/* Left Section - Brand */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
           <div className="flex items-center gap-2">
-            <Compass className="h-5 w-5 text-blue-600" />
-            <span className="text-base font-semibold tracking-tight text-gray-900">
-              WayFinder
+            <Compass className="h-5 w-5 text-[var(--brand)]" />
+            <span className="text-base font-semibold tracking-tight text-[var(--text-primary)]">
+              wayfinder
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-1 max-w-xs">
-            A centralizar informação crítica internacional para vistos, custos, segurança e clima.
+          <p className="text-xs text-[var(--text-muted)] mt-1 max-w-xs font-normal">
+            A sua plataforma centralizada e interativa de planeamento de viagens internacionais e realojamento.
           </p>
         </div>
 
         {/* Center Section - Team Credits */}
         <div className="flex flex-col items-center gap-1.5 text-center">
-          <span className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+          <span className="text-xs font-semibold tracking-wider text-[var(--text-faint)] uppercase">
             Equipa WayFinder · PI-I
           </span>
-          <div className="text-xs text-gray-600 flex flex-wrap justify-center gap-x-3 gap-y-1">
+          <div className="text-xs text-[var(--text-muted)] flex flex-wrap justify-center gap-x-3 gap-y-1 font-normal">
             <span>Victor Hugo</span>
-            <span className="text-gray-300">•</span>
+            <span>·</span>
             <span>Martim Marcelino</span>
-            <span className="text-gray-300">•</span>
+            <span>·</span>
             <span>Eric Cardoso</span>
-            <span className="text-gray-300">•</span>
+            <span>·</span>
             <span>Rodrigo Andrade</span>
           </div>
         </div>
@@ -40,7 +40,7 @@ export default function Footer() {
             href="https://github.com/MarcondezVictor/WayFinder"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-blue-600 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
             <svg
               className="h-4 w-4"
@@ -59,12 +59,11 @@ export default function Footer() {
             </svg>
             <span>Ver no GitHub</span>
           </a>
-          <span className="text-[10px] text-gray-400 flex items-center gap-1">
-            Desenvolvido com <Heart className="h-3 w-3 text-red-500 fill-red-500" /> para Projeto Integrado I
+          <span className="text-[10px] text-[var(--text-faint)] font-normal">
+            Desenvolvido para Projeto Integrado I
           </span>
         </div>
 
-        {/* Note: changed team text colors to gray equivalents */}
       </div>
     </footer>
   );
