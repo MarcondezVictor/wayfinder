@@ -23,7 +23,7 @@ export default function Navbar() {
         {/* Left Side: Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.svg"
+            src="/icon-192.png"
             alt="WayFinder"
             width={32}
             height={32}
