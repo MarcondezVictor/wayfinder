@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { CountrySchema, countriesData as ALL_COUNTRIES } from "@/lib/countries-data";
+import type { CountrySchema } from "@/lib/countries-data";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
@@ -21,12 +21,32 @@ const COUNTRY_COLORS: Record<string, string> = {
   "CL": "#6C3483", "IS": "#2471A3",
 };
 
-export default function InteractiveMap({ countries = [] }: InteractiveMapProps) {
+const COUNTRY_DATA = [
+  { id: "PT", isoCode: "pt", countryName: "Portugal", slug: "portugal" },
+  { id: "BR", isoCode: "br", countryName: "Brasil", slug: "brazil" },
+  { id: "UA", isoCode: "ua", countryName: "Ucrânia", slug: "ukraine" },
+  { id: "FR", isoCode: "fr", countryName: "França", slug: "france" },
+  { id: "ES", isoCode: "es", countryName: "Espanha", slug: "spain" },
+  { id: "US", isoCode: "us", countryName: "Estados Unidos", slug: "united-states" },
+  { id: "JP", isoCode: "jp", countryName: "Japão", slug: "japan" },
+  { id: "GB", isoCode: "gb", countryName: "Reino Unido", slug: "united-kingdom" },
+  { id: "IT", isoCode: "it", countryName: "Itália", slug: "italy" },
+  { id: "SG", isoCode: "sg", countryName: "Singapura", slug: "singapore" },
+  { id: "IL", isoCode: "il", countryName: "Israel", slug: "israel" },
+  { id: "AE", isoCode: "ae", countryName: "Emirados Árabes Unidos", slug: "united-arab-emirates" },
+  { id: "MA", isoCode: "ma", countryName: "Marrocos", slug: "morocco" },
+  { id: "ZA", isoCode: "za", countryName: "África do Sul", slug: "south-africa" },
+  { id: "EG", isoCode: "eg", countryName: "Egito", slug: "egypt" },
+  { id: "AU", isoCode: "au", countryName: "Austrália", slug: "australia" },
+  { id: "NZ", isoCode: "nz", countryName: "Nova Zelândia", slug: "new-zealand" },
+  { id: "SE", isoCode: "se", countryName: "Suécia", slug: "sweden" },
+  { id: "CL", isoCode: "cl", countryName: "Chile", slug: "chile" },
+  { id: "IS", isoCode: "is", countryName: "Islândia", slug: "iceland" }
+];
+
+export default function InteractiveMap({ countries: _countries = [] }: InteractiveMapProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
-  // Fallback to ALL_COUNTRIES if the list is empty
-  const activeCountries = countries.length > 0 ? countries : ALL_COUNTRIES;
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -60,7 +80,12 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
       fill: am5.color("#E2E8F0"),       // default: light gray
       stroke: am5.color("#FFFFFF"),
       strokeWidth: 0.5,
+      tooltipHTML: `<div style="display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:13px;font-weight:600;color:#1e293b;">
+        <img src="/flags/{isoCode}.svg" width="24" height="16" style="border-radius:2px;object-fit:cover;flex-shrink:0;" />
+        <span>{countryName}</span>
+      </div>`,
       interactive: true,
+      cursorOverStyle: "pointer",
     });
 
     // Hover state: slightly dim/darken, don't change color
@@ -68,23 +93,25 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
       fillOpacity: 0.75,
     });
 
-    // Pass colors via data for featured countries
-    polygonSeries.data.setAll(
-      Object.entries(COUNTRY_COLORS).map(([id, color]) => ({
-        id,
+    // Merge COUNTRY_DATA with colors for setting up the series data
+    const mergedData = COUNTRY_DATA.map((item) => {
+      const color = COUNTRY_COLORS[item.id] || "#E2E8F0";
+      return {
+        ...item,
         polygonSettings: {
           fill: am5.color(color),
           cursorOverStyle: "pointer",
         },
-      }))
-    );
+      };
+    });
+
+    polygonSeries.data.setAll(mergedData);
 
     // Click handler
     polygonSeries.mapPolygons.template.events.on("click", (ev) => {
-      const id = (ev.target.dataItem?.dataContext as any)?.id;
-      const country = activeCountries.find((c) => c.isoCode.toUpperCase() === id?.toUpperCase());
-      if (country) {
-        router.push(`/country/${country.slug}`);
+      const ctx = ev.target.dataItem?.dataContext as { id?: string; slug?: string; isoCode?: string; countryName?: string };
+      if (ctx?.slug) {
+        router.push(`/country/${ctx.slug}`);
       }
     });
 
@@ -93,8 +120,8 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
       am5map.MapPointSeries.new(root, {})
     );
 
-    pointSeries.bullets.push((bulletRoot, series, dataItem) => {
-      const ctx = dataItem.dataContext as any;
+    pointSeries.bullets.push((bulletRoot, _series, dataItem) => {
+      const ctx = dataItem.dataContext as { id: string; countryName: string; slug: string };
       const color = COUNTRY_COLORS[ctx.id] || "#1A3055";
 
       const circle = am5.Circle.new(bulletRoot, {
@@ -102,7 +129,10 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
         fill: am5.color(color),         // SÓLIDO: mesma cor do país
         stroke: am5.color("#FFFFFF"),
         strokeWidth: 1,
-        tooltipText: ctx.countryName,
+        tooltipHTML: `<div style="display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:13px;font-weight:600;color:#1e293b;">
+          <img src="/flags/${ctx.id.toLowerCase()}.svg" width="24" height="16" style="border-radius:2px;object-fit:cover;flex-shrink:0;" />
+          <span>${ctx.countryName}</span>
+        </div>`,
         cursorOverStyle: "pointer",
         interactive: true,
       });
@@ -133,7 +163,7 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
       },
       {
         geometry: { type: "Point", coordinates: [54.3773, 24.4764] },
-        countryName: "Emirados Árabes", slug: "united-arab-emirates",
+        countryName: "Emirados Árabes Unidos", slug: "united-arab-emirates",
         id: "AE",
       },
     ]);
@@ -145,7 +175,7 @@ export default function InteractiveMap({ countries = [] }: InteractiveMapProps) 
     return () => {
       root.dispose();
     };
-  }, [activeCountries, router]);
+  }, [router]);
 
   return (
     <div ref={chartRef} className="w-full h-full" />

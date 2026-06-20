@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -62,9 +62,13 @@ export default function RegisterPage() {
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-2">
           <Link href="/" className="flex items-center gap-2 group mb-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--brand-subtle)]">
-              <Compass className="h-4 w-4 text-[var(--brand)]" />
-            </div>
+            <Image
+              src="/logo.svg"
+              alt="WayFinder"
+              width={28}
+              height={28}
+              priority
+            />
             <span className="text-[15px] font-semibold tracking-tight text-[var(--text-primary)]">
               wayfinder
             </span>

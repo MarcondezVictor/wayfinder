@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Menu, X } from "lucide-react";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -20,27 +21,15 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left Side: Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          {/* Tenta carregar logo, fallback para ícone Lucide */}
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--brand-subtle)] shrink-0">
-            <img
-              src="/images/logo-icon.png"
-              alt=""
-              className="h-7 w-7 object-contain rounded-lg"
-              onError={(e) => {
-                // Esconde imagem se não carregar
-                (e.target as HTMLImageElement).style.display = 'none';
-                (e.target as HTMLImageElement)
-                  .nextElementSibling
-                  ?.removeAttribute('hidden');
-              }}
-            />
-            <Compass
-              {...({ hidden: true } as any)}
-              className="h-4 w-4 text-[var(--brand)]"
-            />
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight text-[var(--text-primary)]">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.svg"
+            alt="WayFinder"
+            width={32}
+            height={32}
+            priority
+          />
+          <span className="font-semibold text-slate-900 dark:text-white text-lg">
             wayfinder
           </span>
         </Link>

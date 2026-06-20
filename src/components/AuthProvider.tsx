@@ -1,7 +1,14 @@
 "use client";
-//AuthProvider.tsx
-import React, { createContext, useContext, useEffect, useState } from "react";
+// AuthProvider.tsx
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 interface Profile {
   id: string;
@@ -17,7 +24,7 @@ interface UserPreferences {
 }
 
 interface AuthContextType {
-  user: any;
+  user: User | null;
   profile: Profile | null;
   preferences: UserPreferences | null;
   loading: boolean;
@@ -35,92 +42,116 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchProfileAndPrefs(userId: string) {
+  // Busca profile + preferences. maybeSingle() devolve null (em vez de erro)
+  // quando a linha ainda não existe — evita que a UI rebente para users novos.
+  const fetchProfileAndPrefs = useCallback(async (userId: string) => {
     try {
-      // Fetch profile
-      const { data: profData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+      const [{ data: profData }, { data: prefData }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase
+            .from("user_preferences")
+            .select("*")
+            .eq("id", userId)
+            .maybeSingle(),
+      ]);
 
-      if (profData) {
-        setProfile({
-          id: profData.id,
-          email: profData.email,
-          full_name: profData.full_name,
-          nationality: profData.nationality,
-          avatar_url: profData.avatar_url,
-        });
-      }
+      setProfile(
+          profData
+              ? {
+                id: profData.id,
+                email: profData.email,
+                full_name: profData.full_name,
+                nationality: profData.nationality,
+                avatar_url: profData.avatar_url,
+              }
+              : null
+      );
 
-      // Fetch preferences
-      const { data: prefData } = await supabase
-        .from("user_preferences")
-        .select("*")
-        .eq("id", userId)
-        .single();
-
-      if (prefData) {
-        setPreferences({
-          preferred_travel_style: prefData.preferred_travel_style,
-          preferred_destinations: prefData.preferred_destinations,
-        });
-      }
+      setPreferences(
+          prefData
+              ? {
+                preferred_travel_style: prefData.preferred_travel_style,
+                preferred_destinations: prefData.preferred_destinations,
+              }
+              : null
+      );
     } catch (err) {
       console.error("Error fetching user profile metadata:", err);
     }
-  }
+  }, []);
 
-  async function refreshProfile() {
+  const refreshProfile = useCallback(async () => {
     if (user) {
       await fetchProfileAndPrefs(user.id);
     }
-  }
+  }, [user, fetchProfileAndPrefs]);
 
   useEffect(() => {
-    // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let mounted = true;
+
+    // Rede de segurança: o spinner NUNCA pode ficar preso para sempre.
+    // Se algo demorar mais de 8s, libertamos a UI na mesma.
+    const safety = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 8000);
+
+    // 1. Sessão inicial (lê dos cookies/storage — corre fora do "lock")
+    supabase.auth
+        .getSession()
+        .then(({ data: { session } }) => {
+          if (!mounted) return;
+          const activeUser = session?.user ?? null;
+          setUser(activeUser);
+
+          if (activeUser) {
+            fetchProfileAndPrefs(activeUser.id).finally(() => {
+              if (mounted) setLoading(false);
+            });
+          } else {
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          if (mounted) setLoading(false);
+        });
+
+    // 2. Mudanças de auth.
+    //    IMPORTANTE: este callback NÃO é async e NÃO faz "await" de queries
+    //    ao Supabase aqui dentro. Fazê-lo causa um DEADLOCK do lock interno
+    //    do GoTrue (auth) e o spinner fica infinito. A query é adiada com
+    //    setTimeout(0) para correr FORA do contexto do lock.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+
       const activeUser = session?.user ?? null;
       setUser(activeUser);
-      if (activeUser) {
-        fetchProfileAndPrefs(activeUser.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    })
-    .catch(() => setLoading(false)); // ← ADICIONAR ESTA LINHA
 
-    // 2. Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'INITIAL_SESSION') return; // ← ADICIONAR ESTA LINHA
-
-      const activeUser = session?.user ?? null;
-      setUser(activeUser);
-
-      if (activeUser) {
-        setLoading(true);
-        try {
-          await fetchProfileAndPrefs(activeUser.id);
-        } finally {
-          setLoading(false);  // ← always runs no matter what
-        }
-      } else {
+      if (!activeUser) {
         setProfile(null);
         setPreferences(null);
         setLoading(false);
+        return;
       }
+
+      // Adiar para fora do lock — sem bloquear o estado de loading.
+      setTimeout(() => {
+        if (mounted) fetchProfileAndPrefs(activeUser.id);
+      }, 0);
     });
 
     return () => {
+      mounted = false;
+      clearTimeout(safety);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchProfileAndPrefs]);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -128,9 +159,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, preferences, loading, signOut, refreshProfile }}>
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider
+          value={{ user, profile, preferences, loading, signOut, refreshProfile }}
+      >
+        {children}
+      </AuthContext.Provider>
   );
 }
 

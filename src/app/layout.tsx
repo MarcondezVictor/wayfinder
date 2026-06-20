@@ -13,16 +13,15 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "wayfinder",
-  description: "A sua plataforma centralizada e interativa de planeamento de viagens internacionais e realojamento.",
-  keywords: ["viagens", "visto", "segurança", "custos", "clima", "estudos no estrangeiro", "emigração"],
+  title: 'WayFinder',
+  description: 'Planeia a tua próxima viagem',
   icons: {
     icon: [
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
     ],
-    apple: "/apple-touch-icon.png",
-    shortcut: "/favicon.ico",
+    apple: '/apple-touch-icon.png',
   },
 };
 

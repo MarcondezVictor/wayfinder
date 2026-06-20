@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="14" stroke="#1A3055" stroke-width="2.5" class="stroke-brand" />
+  <path d="M16 6L19 13L26 16L19 19L16 26L13 19L6 16L13 13L16 6Z" fill="#0F9090" class="fill-accent" />
+  <circle cx="16" cy="16" r="3" fill="#1A3055" class="fill-brand" />
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .stroke-brand { stroke: #2ABFBF; }
+      .fill-accent { fill: #2ABFBF; }
+      .fill-brand { fill: #161B27; }
+    }
+  </style>
+</svg>

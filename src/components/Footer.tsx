@@ -1,4 +1,4 @@
-import { Compass } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,7 +8,12 @@ export default function Footer() {
         {/* Left Section - Brand */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
           <div className="flex items-center gap-2">
-            <Compass className="h-5 w-5 text-[var(--brand)]" />
+            <Image
+              src="/logo.svg"
+              alt="WayFinder"
+              width={20}
+              height={20}
+            />
             <span className="text-base font-semibold tracking-tight text-[var(--text-primary)]">
               wayfinder
             </span>
