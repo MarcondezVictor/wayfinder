@@ -56,22 +56,22 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
 
     // Create chart
     const chart = root.container.children.push(
-      am5map.MapChart.new(root, {
-        projection: am5map.geoNaturalEarth1(),
-        panX: "rotateX",
-        panY: "translateY",
-        wheelY: "zoom",
-        maxZoomLevel: 8,
-        homeGeoPoint: { longitude: 10, latitude: 20 },
-      })
+        am5map.MapChart.new(root, {
+          projection: am5map.geoNaturalEarth1(),
+          panX: "rotateX",
+          panY: "translateY",
+          wheelY: "zoom",
+          maxZoomLevel: 8,
+          homeGeoPoint: { longitude: 10, latitude: 20 },
+        })
     );
 
     // Create polygon series for the world map
     const polygonSeries = chart.series.push(
-      am5map.MapPolygonSeries.new(root, {
-        geoJSON: am5geodata_worldLow,
-        exclude: ["AQ"], // Exclude Antarctica
-      })
+        am5map.MapPolygonSeries.new(root, {
+          geoJSON: am5geodata_worldLow,
+          exclude: ["AQ"], // Exclude Antarctica
+        })
     );
 
     // Configure map polygons template
@@ -117,7 +117,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
 
     // Bullet series for small countries
     const pointSeries = chart.series.push(
-      am5map.MapPointSeries.new(root, {})
+        am5map.MapPointSeries.new(root, {})
     );
 
     pointSeries.bullets.push((bulletRoot, _series, dataItem) => {
@@ -151,7 +151,9 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       return am5.Bullet.new(bulletRoot, { sprite: circle });
     });
 
-    // Small countries data with coordinates
+    // Apenas micro-países cujo polígono é demasiado pequeno para clicar.
+    // Países grandes o suficiente (ex.: Emirados Árabes) NÃO levam ponto —
+    // clicam-se diretamente no mapa.
     pointSeries.data.setAll([
       {
         geometry: { type: "Point", coordinates: [103.8198, 1.3521] },
@@ -160,11 +162,6 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       {
         geometry: { type: "Point", coordinates: [35.2137, 31.7683] },
         countryName: "Israel", slug: "israel", id: "IL",
-      },
-      {
-        geometry: { type: "Point", coordinates: [54.3773, 24.4764] },
-        countryName: "Emirados Árabes Unidos", slug: "united-arab-emirates",
-        id: "AE",
       },
     ]);
 
@@ -178,6 +175,6 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
   }, [router]);
 
   return (
-    <div ref={chartRef} className="w-full h-full" />
+      <div ref={chartRef} className="w-full h-full" />
   );
 }

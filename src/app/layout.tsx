@@ -13,37 +13,39 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'WayFinder',
-  description: 'Planeia a tua próxima viagem',
+  title: "WayFinder",
+  description: "Planeia a tua próxima viagem",
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: "/apple-touch-icon.png",
   },
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt"
-      className={`${jakarta.variable} h-full antialiased`}
-    >
+      <html
+          lang="pt"
+          className={`${jakarta.variable} h-full antialiased`}
+          suppressHydrationWarning
+      >
       <body className="min-h-full flex flex-col bg-[var(--bg-page)] text-[var(--text-body)] antialiased">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-grow flex flex-col">
-            {children}
-          </main>
-          <Footer />
-        </AuthProvider>
+      <AuthProvider>
+        <Navbar />
+        <main className="flex-grow flex flex-col">
+          {children}
+        </main>
+        <Footer />
+      </AuthProvider>
       </body>
-    </html>
+      </html>
   );
 }
+  
