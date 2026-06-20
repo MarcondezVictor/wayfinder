@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
           <div className="flex items-center gap-2">
             <Image
-              src="/logo.svg"
+              src="/icon-192.png"
               alt="WayFinder"
               width={20}
               height={20}

@@ -93,6 +93,14 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       fillOpacity: 0.75,
     });
 
+    // Click handler
+    polygonSeries.mapPolygons.template.events.on("click", (ev) => {
+      const ctx = ev.target.dataItem?.dataContext as { id?: string; slug?: string; isoCode?: string; countryName?: string };
+      if (ctx?.slug) {
+        router.push(`/country/${ctx.slug}`);
+      }
+    });
+
     // Merge COUNTRY_DATA with colors for setting up the series data
     const mergedData = COUNTRY_DATA.map((item) => {
       const color = COUNTRY_COLORS[item.id] || "#E2E8F0";
@@ -106,14 +114,6 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
     });
 
     polygonSeries.data.setAll(mergedData);
-
-    // Click handler
-    polygonSeries.mapPolygons.template.events.on("click", (ev) => {
-      const ctx = ev.target.dataItem?.dataContext as { id?: string; slug?: string; isoCode?: string; countryName?: string };
-      if (ctx?.slug) {
-        router.push(`/country/${ctx.slug}`);
-      }
-    });
 
     // Bullet series for small countries
     const pointSeries = chart.series.push(

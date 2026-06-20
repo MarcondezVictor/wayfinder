@@ -89,7 +89,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
     return (
         <button
             disabled
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-gray-50 border border-gray-200 py-3 text-sm font-medium text-gray-400 opacity-60"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border)] py-3 text-sm font-medium text-[var(--text-muted)] opacity-60"
         >
           <Heart className="h-4 w-4 animate-pulse" />
           <span>A carregar...</span>
