@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { CountrySchema } from "@/lib/countries-data";
 import * as am5 from "@amcharts/amcharts5";
@@ -41,20 +41,40 @@ const COUNTRY_DATA = [
   { id: "NZ", isoCode: "nz", countryName: "Nova Zelândia", slug: "new-zealand" },
   { id: "SE", isoCode: "se", countryName: "Suécia", slug: "sweden" },
   { id: "CL", isoCode: "cl", countryName: "Chile", slug: "chile" },
-  { id: "IS", isoCode: "is", countryName: "Islândia", slug: "iceland" }
+  { id: "IS", isoCode: "is", countryName: "Islândia", slug: "iceland" },
 ];
+
+function tooltipHtml(isoCode: string, countryName: string) {
+  return `<div style="display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:13px;font-weight:600;color:#0f172a;">
+    <img src="/flags/${isoCode}.svg" width="24" height="16" style="border-radius:2px;object-fit:cover;flex-shrink:0;" />
+    <span>${countryName}</span>
+  </div>`;
+}
 
 export default function InteractiveMap({ countries: _countries = [] }: InteractiveMapProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [isDark, setIsDark] = useState(false);
+
+  // Acompanha o tema (claro/escuro) e reconstrói o mapa quando muda.
+  useEffect(() => {
+    const el = document.documentElement;
+    const update = () => setIsDark(el.classList.contains("dark"));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(el, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Initialize amCharts Root element
+    // Cores que contrastam com o fundo conforme o tema
+    const UNAVAILABLE_FILL = isDark ? "#3E4C61" : "#E2E8F0"; // países sem dados
+    const BORDER_COLOR = isDark ? "#101826" : "#CBD5E1";     // fronteiras visíveis
+
     const root = am5.Root.new(chartRef.current);
 
-    // Create chart
     const chart = root.container.children.push(
         am5map.MapChart.new(root, {
           projection: am5map.geoNaturalEarth1(),
@@ -66,115 +86,87 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
         })
     );
 
-    // Create polygon series for the world map
     const polygonSeries = chart.series.push(
         am5map.MapPolygonSeries.new(root, {
           geoJSON: am5geodata_worldLow,
-          exclude: ["AQ"], // Exclude Antarctica
+          exclude: ["AQ"],
         })
     );
 
-    // Configure map polygons template
+    // Template base: cor de "indisponível", fronteiras, NÃO interativo por defeito.
     polygonSeries.mapPolygons.template.setAll({
-      templateField: "polygonSettings", // reads settings from data
-      fill: am5.color("#E2E8F0"),       // default: light gray
-      stroke: am5.color("#FFFFFF"),
+      templateField: "polygonSettings",
+      fill: am5.color(UNAVAILABLE_FILL),
+      stroke: am5.color(BORDER_COLOR),
       strokeWidth: 0.5,
-      tooltipHTML: `<div style="display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:13px;font-weight:600;color:#1e293b;">
-        <img src="/flags/{isoCode}.svg" width="24" height="16" style="border-radius:2px;object-fit:cover;flex-shrink:0;" />
-        <span>{countryName}</span>
-      </div>`,
-      interactive: true,
-      cursorOverStyle: "pointer",
+      interactive: false,
     });
 
-    // Hover state: slightly dim/darken, don't change color
+    // Só mostra tooltip se o país tiver dados (countryName). Caso contrário, nada.
+    polygonSeries.mapPolygons.template.adapters.add("tooltipHTML", (html, target) => {
+      const ctx = target.dataItem?.dataContext as { countryName?: string; isoCode?: string } | undefined;
+      if (ctx?.countryName && ctx?.isoCode) {
+        return tooltipHtml(ctx.isoCode, ctx.countryName);
+      }
+      return "";
+    });
+
+    // Hover só afeta os interativos (países com dados)
     polygonSeries.mapPolygons.template.states.create("hover", {
       fillOpacity: 0.75,
     });
 
-    // Click handler
     polygonSeries.mapPolygons.template.events.on("click", (ev) => {
-      const ctx = ev.target.dataItem?.dataContext as { id?: string; slug?: string; isoCode?: string; countryName?: string };
-      if (ctx?.slug) {
-        router.push(`/country/${ctx.slug}`);
-      }
+      const ctx = ev.target.dataItem?.dataContext as { slug?: string } | undefined;
+      if (ctx?.slug) router.push(`/country/${ctx.slug}`);
     });
 
-    // Merge COUNTRY_DATA with colors for setting up the series data
-    const mergedData = COUNTRY_DATA.map((item) => {
-      const color = COUNTRY_COLORS[item.id] || "#E2E8F0";
-      return {
-        ...item,
-        polygonSettings: {
-          fill: am5.color(color),
-          cursorOverStyle: "pointer",
-        },
-      };
-    });
-
+    // Países com dados: cor própria + interativos
+    const mergedData = COUNTRY_DATA.map((item) => ({
+      ...item,
+      polygonSettings: {
+        fill: am5.color(COUNTRY_COLORS[item.id] || UNAVAILABLE_FILL),
+        interactive: true,
+        cursorOverStyle: "pointer",
+      },
+    }));
     polygonSeries.data.setAll(mergedData);
 
-    // Bullet series for small countries
-    const pointSeries = chart.series.push(
-        am5map.MapPointSeries.new(root, {})
-    );
+    // Pontos para micro-países (Singapura, Israel)
+    const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
 
     pointSeries.bullets.push((bulletRoot, _series, dataItem) => {
-      const ctx = dataItem.dataContext as { id: string; countryName: string; slug: string };
+      const ctx = dataItem.dataContext as { id: string; isoCode: string; countryName: string; slug: string };
       const color = COUNTRY_COLORS[ctx.id] || "#1A3055";
 
       const circle = am5.Circle.new(bulletRoot, {
-        radius: 4,                      // PEQUENO: 4px
-        fill: am5.color(color),         // SÓLIDO: mesma cor do país
-        stroke: am5.color("#FFFFFF"),
+        radius: 4,
+        fill: am5.color(color),
+        stroke: am5.color(isDark ? "#0F172A" : "#FFFFFF"),
         strokeWidth: 1,
-        tooltipHTML: `<div style="display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:13px;font-weight:600;color:#1e293b;">
-          <img src="/flags/${ctx.id.toLowerCase()}.svg" width="24" height="16" style="border-radius:2px;object-fit:cover;flex-shrink:0;" />
-          <span>${ctx.countryName}</span>
-        </div>`,
+        tooltipHTML: tooltipHtml(ctx.isoCode, ctx.countryName),
         cursorOverStyle: "pointer",
         interactive: true,
       });
 
-      circle.states.create("hover", {
-        radius: 6,
-        strokeWidth: 1.5,
-      });
-
+      circle.states.create("hover", { radius: 6, strokeWidth: 1.5 });
       circle.events.on("click", () => {
-        if (ctx?.slug) {
-          router.push(`/country/${ctx.slug}`);
-        }
+        if (ctx?.slug) router.push(`/country/${ctx.slug}`);
       });
 
       return am5.Bullet.new(bulletRoot, { sprite: circle });
     });
 
-    // Apenas micro-países cujo polígono é demasiado pequeno para clicar.
-    // Países grandes o suficiente (ex.: Emirados Árabes) NÃO levam ponto —
-    // clicam-se diretamente no mapa.
     pointSeries.data.setAll([
-      {
-        geometry: { type: "Point", coordinates: [103.8198, 1.3521] },
-        countryName: "Singapura", slug: "singapore", id: "SG",
-      },
-      {
-        geometry: { type: "Point", coordinates: [35.2137, 31.7683] },
-        countryName: "Israel", slug: "israel", id: "IL",
-      },
+      { geometry: { type: "Point", coordinates: [103.8198, 1.3521] }, isoCode: "sg", countryName: "Singapura", slug: "singapore", id: "SG" },
+      { geometry: { type: "Point", coordinates: [35.2137, 31.7683] }, isoCode: "il", countryName: "Israel", slug: "israel", id: "IL" },
     ]);
 
-    // Initial animations
     polygonSeries.appear(1000);
     chart.appear(1000, 100);
 
-    return () => {
-      root.dispose();
-    };
-  }, [router]);
+    return () => root.dispose();
+  }, [router, isDark]);
 
-  return (
-      <div ref={chartRef} className="w-full h-full" />
-  );
+  return <div ref={chartRef} className="w-full h-full" />;
 }
