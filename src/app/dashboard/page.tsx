@@ -364,7 +364,6 @@ export default function DashboardPage() {
                             />
 
                             <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)]/95 px-2.5 py-1 text-xs font-semibold text-[var(--text-primary)] border border-[var(--border-subtle)] shadow-sm">
-                              <span>{country.flag_emoji}</span>
                               <span>{country.name}</span>
                             </div>
 
