@@ -1,423 +1,702 @@
-import { getCountryBySlug, getCountries } from "@/lib/db-countries";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
+import {
+  Compass,
+  Stamp,
+  ShieldCheck,
+  Wallet,
+  CloudSun,
+  Gauge,
+  Camera,
+  Building2,
+  MapPin,
+  Users,
+  Languages,
+  CalendarDays,
+  Plug,
+  Euro,
+  Phone,
+  AlertTriangle,
+  Wifi,
+  Bus,
+  HeartPulse,
+  Thermometer,
+  Hotel,
+  Utensils,
+  Coins,
+  FileText,
+  Syringe,
+  Globe,
+  Loader2,
+  ArrowLeft,
+  type LucideIcon,
+} from "lucide-react";
+
+import { getCountryBySlug } from "@/lib/db-countries";
+import type { CountrySchema, PointOfInterest } from "@/lib/countries-data";
 import FavoriteButton from "@/components/FavoriteButton";
-import { PointOfInterest } from "@/lib/countries-data";
 
-interface PageProps {
-  params: Promise<{ slug: string }>;
+/* ----------------------------------------------------------------------------
+ * Navegação de secções (cada id corresponde a uma <Section/> com o mesmo id)
+ * -------------------------------------------------------------------------- */
+const SECTIONS: { id: string; label: string; icon: LucideIcon }[] = [
+  { id: "overview", label: "Visão geral", icon: Compass },
+  { id: "entry", label: "Entrada & Vistos", icon: Stamp },
+  { id: "safety", label: "Segurança", icon: ShieldCheck },
+  { id: "costs", label: "Custos", icon: Wallet },
+  { id: "climate", label: "Clima", icon: CloudSun },
+  { id: "metrics", label: "Métricas", icon: Gauge },
+  { id: "attractions", label: "Atrações", icon: Camera },
+  { id: "cities", label: "Cidades", icon: Building2 },
+];
+
+/* ----------------------------------------------------------------------------
+ * Helpers
+ * -------------------------------------------------------------------------- */
+const eur = (value: number) =>
+    new Intl.NumberFormat("pt-PT", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(value);
+
+// Cor da barra consoante o "score" (0..1). Usa tokens semânticos do design system.
+function toneColor(ratio: number): string {
+  if (ratio >= 0.66) return "var(--success)";
+  if (ratio >= 0.4) return "var(--accent)";
+  return "var(--danger)";
 }
 
-// Generate static params for all countries so it builds statically
-export async function generateStaticParams() {
-  const list = await getCountries();
-  return list.map((c) => ({
-    slug: c.slug,
-  }));
-}
-
-export default async function CountryPage({ params }: PageProps) {
-  const { slug } = await params;
-  const country = await getCountryBySlug(slug);
-
-  if (!country) {
-    notFound();
-  }
-
-  // Visual helpers for scores
-  const getScoreBadgeColor = (score: number) => {
-    if (score >= 8) return "bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success-border)]";
-    if (score >= 5) return "bg-[var(--warning-bg)] text-[var(--warning)] border border-[var(--warning-border)]";
-    return "bg-[var(--danger-bg)] text-[var(--danger)] border border-[var(--danger-border)]";
-  };
-
-  const getScoreBarColor = (score: number) => {
-    if (score >= 8) return "bg-[var(--success)]";
-    if (score >= 5) return "bg-[var(--warning)]";
-    return "bg-[var(--danger)]";
-  };
-
+/* ----------------------------------------------------------------------------
+ * Componentes reutilizáveis (locais a esta página)
+ * -------------------------------------------------------------------------- */
+function Card({
+                children,
+                className = "",
+              }: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[var(--bg-page)] pb-20 relative text-[var(--text-body)]">
-      
-      {/* Hero Banner Header */}
-      <div className="relative w-full h-[320px] bg-[var(--bg-surface)] border-b border-[var(--border)] overflow-hidden">
-        <img
-          src={country.imageUrl}
-          alt={country.name}
-          className="w-full h-full object-cover opacity-20 filter brightness-105"
-        />
-        <div className="absolute inset-0 bg-[var(--bg-surface)]/60" />
-        
-        {/* Navigation Breadcrumb */}
-        <div className="absolute top-8 left-6 md:left-12 z-10">
-          <Link
-            href="/"
-            className="flex items-center gap-2 rounded-md bg-[var(--bg-surface)] border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] shadow-sm transition-all active:scale-[0.98]"
-          >
-            <span>Voltar ao Mapa</span>
-          </Link>
-        </div>
+      <div
+          className={`rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6 ${className}`}
+      >
+        {children}
+      </div>
+  );
+}
 
-        {/* Hero Details */}
-        <div className="absolute bottom-8 left-6 md:left-12 flex flex-col gap-2 max-w-4xl text-[var(--text-primary)]">
-          <div className="flex items-center gap-3">
-            <span className="text-5xl">{country.flagEmoji}</span>
-            <div className="flex flex-col">
-              <div className="inline-flex items-center gap-1.5 rounded bg-[var(--bg-subtle)] text-[var(--text-muted)] border border-[var(--border)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider w-max">
-                {country.continent} · {country.isoCode}
-              </div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--text-primary)] mt-0.5">
-                {country.name}
-              </h1>
-            </div>
+function Section({
+                   id,
+                   eyebrow,
+                   title,
+                   icon: Icon,
+                   children,
+                 }: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  icon: LucideIcon;
+  children: ReactNode;
+}) {
+  return (
+      <section id={id} className="scroll-mt-32">
+        <div className="mb-1 flex items-center gap-2">
+          <Icon className="h-4 w-4 text-[var(--brand)]" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--brand)]">
+          {eyebrow}
+        </span>
+        </div>
+        <h2 className="mb-5 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+          {title}
+        </h2>
+        {children}
+      </section>
+  );
+}
+
+function InfoRow({
+                   icon: Icon,
+                   label,
+                   value,
+                 }: {
+  icon: LucideIcon;
+  label: string;
+  value: ReactNode;
+}) {
+  return (
+      <div className="flex items-start gap-3 border-b border-[var(--border-subtle)] py-3 last:border-0">
+        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--text-muted)]" />
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-wide text-[var(--text-faint)]">
+            {label}
           </div>
-          <p className="text-sm md:text-base text-[var(--text-muted)] font-medium italic leading-relaxed max-w-2xl">
-            "{country.tagline}"
+          <div className="break-words font-medium text-[var(--text-body)]">
+            {value}
+          </div>
+        </div>
+      </div>
+  );
+}
+
+function Metric({
+                  icon: Icon,
+                  label,
+                  value,
+                  max = 10,
+                }: {
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  max?: number;
+}) {
+  const ratio = Math.max(0, Math.min(1, value / max));
+  return (
+      <div>
+        <div className="mb-1.5 flex items-center justify-between">
+        <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-body)]">
+          <Icon className="h-4 w-4 text-[var(--text-muted)]" />
+          {label}
+        </span>
+          <span className="text-sm font-semibold text-[var(--text-primary)]">
+          {value}
+            <span className="text-[var(--text-faint)]">/{max}</span>
+        </span>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-subtle)]">
+          <div
+              className="h-full rounded-full transition-[width] duration-500"
+              style={{ width: `${ratio * 100}%`, backgroundColor: toneColor(ratio) }}
+          />
+        </div>
+      </div>
+  );
+}
+
+function Chip({ children }: { children: ReactNode }) {
+  return (
+      <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-subtle)] px-3 py-1 text-sm font-medium text-[var(--text-body)]">
+      {children}
+    </span>
+  );
+}
+
+function AttractionCard({ poi }: { poi: PointOfInterest }) {
+  return (
+      <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)]">
+        <div className="relative aspect-[16/10] w-full bg-[var(--bg-subtle)]">
+          {/* Imagens de atrações podem vir de domínios variados; uso <img> simples
+            para não depender de images.remotePatterns no next.config.ts */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+              src={poi.imageUrl}
+              alt={poi.name}
+              loading="lazy"
+              className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="font-semibold text-[var(--text-primary)]">{poi.name}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
+            {poi.description}
           </p>
         </div>
+      </article>
+  );
+}
+
+/* ----------------------------------------------------------------------------
+ * Calculadora de custos (estado local: nº de dias)
+ * -------------------------------------------------------------------------- */
+function CostCalculator({ country }: { country: CountrySchema }) {
+  const dailyEstimate =
+      country.avgHotelPrice + country.avgMealPrice * 2 + country.avgTransportCost;
+  const [days, setDays] = useState(3);
+  const total = dailyEstimate * Math.max(1, days);
+
+  const breakdown: { icon: LucideIcon; label: string; value: number }[] = [
+    { icon: Hotel, label: "Alojamento (1 noite)", value: country.avgHotelPrice },
+    { icon: Utensils, label: "Refeições (2/dia)", value: country.avgMealPrice * 2 },
+    { icon: Bus, label: "Transporte (1 dia)", value: country.avgTransportCost },
+  ];
+
+  return (
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card>
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-faint)]">
+            Custo diário estimado
+          </h3>
+          <div className="space-y-3">
+            {breakdown.map((row) => (
+                <div key={row.label} className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 text-[var(--text-body)]">
+                <row.icon className="h-4 w-4 text-[var(--text-muted)]" />
+                {row.label}
+              </span>
+                  <span className="font-medium text-[var(--text-primary)]">
+                {eur(row.value)}
+              </span>
+                </div>
+            ))}
+            <div className="mt-2 flex items-center justify-between border-t border-[var(--border-subtle)] pt-3">
+              <span className="font-semibold text-[var(--text-primary)]">Por dia</span>
+              <span className="text-lg font-bold text-[var(--brand)]">
+              {eur(dailyEstimate)}
+            </span>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="flex flex-col justify-between">
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-faint)]">
+              Estima a tua viagem
+            </h3>
+            <label
+                htmlFor="days"
+                className="mb-2 block text-sm text-[var(--text-muted)]"
+            >
+              Número de dias
+            </label>
+            <input
+                id="days"
+                type="number"
+                min={1}
+                value={days}
+                onChange={(e) => setDays(Math.max(1, Number(e.target.value) || 1))}
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-page)] px-4 py-2.5 text-[var(--text-primary)] outline-none focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand-subtle)]"
+            />
+          </div>
+          <div className="mt-5 rounded-xl border border-[var(--brand-subtle)] bg-[var(--brand-subtle)] p-4">
+            <div className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
+              Total estimado · {Math.max(1, days)}{" "}
+              {Math.max(1, days) === 1 ? "dia" : "dias"}
+            </div>
+            <div className="mt-1 text-3xl font-bold text-[var(--brand)]">
+              {eur(total)}
+            </div>
+            <p className="mt-1 text-xs text-[var(--text-faint)]">
+              Estimativa indicativa, sem voos.
+            </p>
+          </div>
+        </Card>
       </div>
+  );
+}
 
-      {/* Main Content Dashboard Grid */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-6 mt-12">
-        
-        {/* Column 1 & 2 - Primary Details */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          
-          {/* About & Demographics Grid */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-6">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-                Sobre {country.name}
-              </h2>
-              <p className="text-sm md:text-base text-[var(--text-body)] leading-relaxed font-normal">
-                {country.description}
-              </p>
-            </div>
+/* ----------------------------------------------------------------------------
+ * Página
+ * -------------------------------------------------------------------------- */
+export default function CountryPage() {
+  const { slug } = useParams<{ slug: string }>();
 
-            <hr className="border-[var(--border-subtle)]" />
+  const [country, setCountry] = useState<CountrySchema | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState<string>(SECTIONS[0].id);
+  const [flagError, setFlagError] = useState(false);
 
-            {/* Demographics Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              
-              {/* Capital */}
-              <div className="flex flex-col p-3 rounded bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
-                <span className="text-[9px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">Capital</span>
-                <span className="text-xs font-semibold text-[var(--text-primary)] mt-1">{country.capital}</span>
-              </div>
+  // Carregar país por slug
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!slug) return;
+      setLoading(true);
+      setFlagError(false);
+      try {
+        const data = await getCountryBySlug(slug);
+        if (!cancelled) setCountry(data ?? null);
+      } catch {
+        if (!cancelled) setCountry(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
-              {/* Population */}
-              <div className="flex flex-col p-3 rounded bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
-                <span className="text-[9px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">População</span>
-                <span className="text-xs font-semibold text-[var(--text-primary)] mt-1">
-                  {(country.population / 1000000).toFixed(1)}M
-                </span>
-              </div>
+  // Realçar a secção ativa ao fazer scroll
+  useEffect(() => {
+    if (!country) return;
+    const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+              .filter((e) => e.isIntersecting)
+              .sort(
+                  (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+              );
+          if (visible[0]) setActive(visible[0].target.id);
+        },
+        { rootMargin: "-130px 0px -65% 0px", threshold: 0 }
+    );
+    SECTIONS.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [country]);
 
-              {/* Languages */}
-              <div className="flex flex-col p-3 rounded bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
-                <span className="text-[9px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">Idiomas</span>
-                <span className="text-xs font-semibold text-[var(--text-primary)] mt-1 truncate" title={country.languages}>
-                  {country.languages}
-                </span>
-              </div>
+  const flagSrc = useMemo(
+      () => (country ? `/flags/${country.isoCode.toLowerCase()}.svg` : ""),
+      [country]
+  );
 
-              {/* Currency */}
-              <div className="flex flex-col p-3 rounded bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
-                <span className="text-[9px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">Moeda</span>
-                <span className="text-xs font-semibold text-[var(--text-primary)] mt-1 truncate" title={country.currency}>
-                  {country.currency}
-                </span>
-              </div>
-            </div>
+  function goToSection(id: string) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActive(id);
+    }
+  }
+
+  /* ---- Estado: a carregar ---- */
+  if (loading) {
+    return (
+        <div className="grid min-h-[60vh] place-items-center text-[var(--text-muted)]">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-7 w-7 animate-spin" />
+            <span>A carregar país…</span>
           </div>
+        </div>
+    );
+  }
 
-          {/* Travel & Legal Requirements */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-6">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-              Requisitos Legais & Entrada
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Visa Requirements */}
-              <div className="p-5 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-subtle)] flex flex-col gap-2">
-                <span className="font-semibold text-xs text-[var(--text-primary)]">Regime de Vistos</span>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
-                  {country.visaRequirements}
-                </p>
-              </div>
-
-              {/* Passport Requirements */}
-              <div className="p-5 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-subtle)] flex flex-col gap-2">
-                <span className="font-semibold text-xs text-[var(--text-primary)]">Validade do Passaporte</span>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
-                  {country.passportRequirements}
-                </p>
-              </div>
-
-              {/* ETIAS / ESTA */}
-              <div className="p-5 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-subtle)] flex flex-col gap-2">
-                <span className="font-semibold text-xs text-[var(--text-primary)]">ETIAS / ESTA / Autorizações</span>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
-                  {country.etiasRequirements}
-                </p>
-              </div>
-
-              {/* Vaccination */}
-              <div className="p-5 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-subtle)] flex flex-col gap-2">
-                <span className="font-semibold text-xs text-[var(--text-primary)]">Vacinação e Saúde</span>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed font-normal">
-                  {country.vaccineRequirements}
-                </p>
-              </div>
-            </div>
+  /* ---- Estado: não encontrado ---- */
+  if (!country) {
+    return (
+        <div className="grid min-h-[60vh] place-items-center px-4">
+          <div className="max-w-md text-center">
+            <Globe className="mx-auto mb-4 h-10 w-10 text-[var(--text-faint)]" />
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              País não encontrado
+            </h1>
+            <p className="mt-2 text-[var(--text-muted)]">
+              Não encontrámos nenhum país para este endereço.
+            </p>
+            <Link
+                href="/"
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand)] px-4 py-2.5 font-medium text-[var(--bg-surface)] transition-colors hover:bg-[var(--brand-hover)]"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar à página inicial
+            </Link>
           </div>
+        </div>
+    );
+  }
 
-          {/* Points of Interest */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-6">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-              Pontos de Interesse & Atrações
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {(country.topAttractions as PointOfInterest[]).map((poi, idx) => (
-                <div key={idx} className="flex flex-col rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                  <div className="relative h-36 w-full bg-[var(--bg-subtle)]">
-                    <img
-                      src={poi.imageUrl}
-                      alt={poi.name}
-                      className="h-full w-full object-cover"
+  /* ---- Conteúdo ---- */
+  return (
+      <div className="w-full bg-[var(--bg-page)]">
+        {/* HERO full-bleed */}
+        <header className="relative">
+          <div className="relative h-[58vh] min-h-[420px] w-full">
+            <Image
+                src={country.imageUrl}
+                alt={country.name}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+            />
+            {/* Gradiente escuro para legibilidade — sempre escuro, logo texto branco
+              é legível em ambos os temas (não é uma superfície "temável"). */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
+
+            <div className="absolute inset-x-0 bottom-0">
+              <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6 lg:px-8">
+                <div className="flex items-end justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-4 flex items-center gap-3">
+                    <span className="grid h-12 w-16 place-items-center overflow-hidden rounded-md border border-white/25 bg-white/10 backdrop-blur-sm">
+                      {!flagError ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                              src={flagSrc}
+                              alt={`Bandeira de ${country.name}`}
+                              className="h-full w-full object-cover"
+                              onError={() => setFlagError(true)}
+                          />
+                      ) : (
+                          <span className="text-2xl">{country.flagEmoji}</span>
+                      )}
+                    </span>
+                      <Chip>
+                        <MapPin className="mr-1.5 h-3.5 w-3.5" />
+                        {country.continent}
+                      </Chip>
+                    </div>
+
+                    <h1 className="text-4xl font-extrabold leading-tight text-white drop-shadow-sm sm:text-5xl lg:text-6xl">
+                      {country.name}
+                    </h1>
+                    <p className="mt-2 max-w-2xl text-base text-white/85 sm:text-lg">
+                      {country.tagline}
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center rounded-full border border-white/25 bg-white/15 px-3 py-1 text-sm text-white backdrop-blur-sm">
+                      <Building2 className="mr-1.5 h-3.5 w-3.5" />
+                      {country.capital}
+                    </span>
+                      <span className="inline-flex items-center rounded-full border border-white/25 bg-white/15 px-3 py-1 text-sm text-white backdrop-blur-sm">
+                      <Euro className="mr-1.5 h-3.5 w-3.5" />
+                        {country.currency}
+                    </span>
+                    </div>
+                  </div>
+
+                  {/* Ajusta a prop ao teu FavoriteButton (ex.: country={country}, slug, etc.) */}
+                  <div className="shrink-0">
+                    <FavoriteButton
+                        countryId={country.id}
+                        countryName={country.name}
                     />
                   </div>
-                  <div className="p-4 flex flex-col gap-1.5">
-                    <h4 className="text-xs font-semibold text-[var(--text-primary)] leading-tight">
-                      {poi.name}
-                    </h4>
-                    <p className="text-[10px] text-[var(--text-muted)] leading-relaxed line-clamp-3">
-                      {poi.description}
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* NAV de secções (sticky abaixo da Navbar de 56px) */}
+        <nav className="sticky top-14 z-30 border-b border-[var(--border)] bg-[var(--bg-surface)]">
+          <div className="mx-auto max-w-5xl px-2 sm:px-4 lg:px-6">
+            <ul className="flex gap-1 overflow-x-auto py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {SECTIONS.map((s) => {
+                const isActive = active === s.id;
+                return (
+                    <li key={s.id}>
+                      <button
+                          type="button"
+                          onClick={() => goToSection(s.id)}
+                          className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                              isActive
+                                  ? "bg-[var(--brand-subtle)] text-[var(--brand)]"
+                                  : "text-[var(--text-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text-body)]"
+                          }`}
+                      >
+                        <s.icon className="h-4 w-4" />
+                        {s.label}
+                      </button>
+                    </li>
+                );
+              })}
+            </ul>
+          </div>
+        </nav>
+
+        {/* CONTEÚDO */}
+        <div className="mx-auto max-w-5xl space-y-16 px-4 py-12 sm:px-6 lg:px-8">
+          {/* Visão geral */}
+          <Section id="overview" eyebrow="O essencial" title="Visão geral" icon={Compass}>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Card className="lg:col-span-2">
+                <p className="leading-relaxed text-[var(--text-body)]">
+                  {country.description}
+                </p>
+              </Card>
+              <Card>
+                <InfoRow
+                    icon={Users}
+                    label="População"
+                    value={country.population.toLocaleString("pt-PT")}
+                />
+                <InfoRow
+                    icon={Languages}
+                    label="Idiomas"
+                    value={country.languages}
+                />
+                <InfoRow
+                    icon={CalendarDays}
+                    label="Melhor altura para visitar"
+                    value={country.bestTimeVisit}
+                />
+                <InfoRow
+                    icon={Plug}
+                    label="Tomada elétrica"
+                    value={country.powerPlugType}
+                />
+              </Card>
+            </div>
+          </Section>
+
+          {/* Entrada & Vistos */}
+          <Section
+              id="entry"
+              eyebrow="Antes de partir"
+              title="Entrada & Vistos"
+              icon={Stamp}
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Card>
+                <InfoRow
+                    icon={Stamp}
+                    label="Visto"
+                    value={country.visaRequirements}
+                />
+                <InfoRow
+                    icon={FileText}
+                    label="Passaporte"
+                    value={country.passportRequirements}
+                />
+              </Card>
+              <Card>
+                <InfoRow
+                    icon={Globe}
+                    label="ETIAS"
+                    value={country.etiasRequirements}
+                />
+                <InfoRow
+                    icon={Syringe}
+                    label="Vacinas"
+                    value={country.vaccineRequirements}
+                />
+              </Card>
+            </div>
+          </Section>
+
+          {/* Segurança */}
+          <Section id="safety" eyebrow="Tranquilidade" title="Segurança" icon={ShieldCheck}>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Card>
+                <div className="mb-4">
+                  <Metric
+                      icon={ShieldCheck}
+                      label="Índice de segurança"
+                      value={country.safetyScore}
+                      max={10}
+                  />
+                </div>
+                <InfoRow
+                    icon={Phone}
+                    label="Números de emergência"
+                    value={country.emergencyNumbers}
+                />
+              </Card>
+
+              {country.travelWarnings ? (
+                  <div className="rounded-2xl border border-[var(--warning-border)] bg-[var(--warning-bg)] p-5 sm:p-6">
+                    <div className="mb-2 flex items-center gap-2 font-semibold text-[var(--warning)]">
+                      <AlertTriangle className="h-5 w-5" />
+                      Avisos de viagem
+                    </div>
+                    <p className="leading-relaxed text-[var(--text-body)]">
+                      {country.travelWarnings}
                     </p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Column 3 - Side Bar Widgets */}
-        <div className="flex flex-col gap-6">
-          
-          {/* Action Card: Save Favorites or Compare */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-4">
-            <h3 className="text-base font-semibold text-[var(--text-primary)] tracking-tight">
-              Ações de Destino
-            </h3>
-            
-            <div className="flex flex-col gap-2.5">
-              {/* Save to Favorites */}
-              <FavoriteButton countryId={country.id} countryName={country.name} />
-
-              {/* Compare Button — No icons inside main actions */}
-              <Link
-                href={`/compare?countryA=${country.slug}`}
-                className="text-sm font-medium text-white px-5 py-2.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors text-center w-full"
-              >
-                Comparar este País
-              </Link>
-            </div>
-          </div>
-
-          {/* Safety & Alerts Widget */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-6">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-[var(--text-faint)] uppercase tracking-wider leading-none">
-                Segurança Geral
-              </span>
-              <span className="text-base font-semibold text-[var(--text-primary)] tracking-tight mt-2">
-                Índice de Segurança
-              </span>
-            </div>
-
-            {/* Visual Score Meter */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between text-xs font-medium text-[var(--text-muted)]">
-                <span>Classificação de Segurança</span>
-                <span className="text-[var(--brand)] font-semibold">{country.safetyScore} de 10</span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-[var(--bg-subtle)] overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${getScoreBarColor(country.safetyScore)}`}
-                  style={{ width: `${country.safetyScore * 10}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 text-xs">
-              <div className="font-normal text-[var(--text-muted)]">
-                Número de Emergência: <span className="font-semibold text-[var(--text-primary)]">{country.emergencyNumbers}</span>
-              </div>
-              {country.travelWarnings && (
-                <div className="flex gap-2 rounded-md border border-[var(--danger-border)] bg-[var(--danger-bg)] p-3 text-[11px] text-[var(--danger)] font-medium leading-relaxed">
-                  <span>{country.travelWarnings}</span>
-                </div>
+              ) : (
+                  <Card className="flex items-center gap-3">
+                    <ShieldCheck className="h-5 w-5 text-[var(--success)]" />
+                    <span className="text-[var(--text-body)]">
+                  Sem avisos de viagem ativos.
+                </span>
+                  </Card>
               )}
             </div>
-          </div>
+          </Section>
 
-          {/* Budget Widget */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-6">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-[var(--text-faint)] uppercase tracking-wider leading-none">
-                Finanças e Custos
+          {/* Custos */}
+          <Section id="costs" eyebrow="Orçamento (EUR)" title="Custos" icon={Wallet}>
+            <CostCalculator country={country} />
+            <Card className="mt-4">
+              <Metric
+                  icon={Coins}
+                  label="Índice de custo de vida"
+                  value={country.costLivingIndex}
+                  max={120}
+              />
+              <p className="mt-2 text-xs text-[var(--text-faint)]">
+                Escala 1–120 (referência relativa entre países).
+              </p>
+            </Card>
+          </Section>
+
+          {/* Clima */}
+          <Section id="climate" eyebrow="Quando ir" title="Clima" icon={CloudSun}>
+            <Card>
+              <div className="mb-4 flex items-center gap-2">
+                <Thermometer className="h-5 w-5 text-[var(--accent)]" />
+                <span className="font-semibold text-[var(--text-primary)]">
+                {country.climateType}
               </span>
-              <span className="text-base font-semibold text-[var(--text-primary)] tracking-tight mt-2">
-                Custos Médios Estimados
-              </span>
-            </div>
-
-            {/* Living Index */}
-            <div className="flex flex-col gap-1.5">
-              <div className="flex justify-between text-xs font-medium text-[var(--text-muted)]">
-                <span>Índice de Custo de Vida</span>
-                <span className="text-[var(--brand)] font-semibold">{country.costLivingIndex} / 120</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-[var(--bg-subtle)] overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[var(--brand)]"
-                  style={{ width: `${(country.costLivingIndex / 120) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            <hr className="border-[var(--border-subtle)]" />
-
-            {/* Detailed breakdowns */}
-            <div className="flex flex-col gap-3 text-xs font-normal text-[var(--text-muted)]">
-              {/* Hotel */}
-              <div className="flex justify-between">
-                <span>Alojamento (Médio / Noite)</span>
-                <span className="text-[var(--text-primary)] font-semibold">{country.avgHotelPrice}€</span>
-              </div>
-
-              {/* Meal */}
-              <div className="flex justify-between">
-                <span>Refeição Individual</span>
-                <span className="text-[var(--text-primary)] font-semibold">{country.avgMealPrice}€</span>
-              </div>
-
-              {/* Transport */}
-              <div className="flex justify-between">
-                <span>Transporte Público</span>
-                <span className="text-[var(--text-primary)] font-semibold">{country.avgTransportCost}€</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Practical Metrics Widget */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-5">
-            <h3 className="text-base font-semibold text-[var(--text-primary)] tracking-tight">
-              Informações Práticas
-            </h3>
-
-            <div className="flex flex-col gap-4 text-xs font-normal text-[var(--text-muted)]">
-              {/* Power plug */}
-              <div className="flex justify-between items-center">
-                <span>Tomadas e Voltagem</span>
-                <span className="rounded bg-[var(--bg-subtle)] border border-[var(--border)] px-2.5 py-1 font-semibold text-[var(--text-primary)]">
-                  {country.powerPlugType}
-                </span>
-              </div>
-
-              <hr className="border-[var(--border-subtle)]" />
-
-              {/* Internet Quality */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between">
-                  <span>Qualidade de Internet</span>
-                  <span className="font-semibold text-[var(--text-primary)]">{country.internetQualityScore}/10</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-[var(--bg-subtle)] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${getScoreBarColor(country.internetQualityScore)}`}
-                    style={{ width: `${country.internetQualityScore * 10}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Healthcare Quality */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between">
-                  <span>Qualidade da Saúde</span>
-                  <span className="font-semibold text-[var(--text-primary)]">{country.healthcareQualityScore}/10</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-[var(--bg-subtle)] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${getScoreBarColor(country.healthcareQualityScore)}`}
-                    style={{ width: `${country.healthcareQualityScore * 10}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Transportation Quality */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between">
-                  <span>Rede de Transportes</span>
-                  <span className="font-semibold text-[var(--text-primary)]">{country.transportQualityScore}/10</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-[var(--bg-subtle)] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${getScoreBarColor(country.transportQualityScore)}`}
-                    style={{ width: `${country.transportQualityScore * 10}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Tourism & Climate Widgets */}
-          <div className="p-6 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors overflow-hidden flex flex-col gap-5">
-            <h3 className="text-base font-semibold text-[var(--text-primary)] tracking-tight">
-              Clima & Turismo
-            </h3>
-
-            <div className="flex flex-col gap-4 text-xs font-normal text-[var(--text-muted)]">
-              {/* Climate badge */}
-              <div className="flex justify-between items-center">
-                <span>Clima Tipo</span>
-                <span className="rounded-full bg-[var(--accent-subtle)] px-2.5 py-0.5 text-[var(--accent)] font-medium text-xs border border-[var(--accent)]/15">
-                  {country.climateType}
-                </span>
-              </div>
-              <p className="text-[11px] text-[var(--text-muted)] leading-normal">
+              <p className="leading-relaxed text-[var(--text-body)]">
                 {country.climateDetails}
               </p>
+            </Card>
+          </Section>
 
-              <hr className="border-[var(--border-subtle)]" />
+          {/* Métricas práticas */}
+          <Section
+              id="metrics"
+              eyebrow="No terreno"
+              title="Métricas práticas"
+              icon={Gauge}
+          >
+            <Card className="grid gap-5 sm:grid-cols-3">
+              <Metric
+                  icon={Wifi}
+                  label="Internet"
+                  value={country.internetQualityScore}
+              />
+              <Metric
+                  icon={Bus}
+                  label="Transportes"
+                  value={country.transportQualityScore}
+              />
+              <Metric
+                  icon={HeartPulse}
+                  label="Saúde"
+                  value={country.healthcareQualityScore}
+              />
+            </Card>
+          </Section>
 
-              {/* Best time to visit */}
-              <div className="flex flex-col gap-1">
-                <span>Melhor Época para Visitar</span>
-                <span className="text-[var(--text-primary)] font-medium leading-normal text-[11px]">
-                  {country.bestTimeVisit}
-                </span>
-              </div>
-
-              {/* Major Cities */}
-              <div className="flex flex-col gap-2">
-                <span>Cidades Principais</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {country.majorCities.map((city, idx) => (
-                    <span key={idx} className="rounded bg-[var(--bg-subtle)] border border-[var(--border)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-body)]">
-                      {city}
-                    </span>
+          {/* Atrações */}
+          <Section id="attractions" eyebrow="Não perder" title="Atrações" icon={Camera}>
+            {country.topAttractions.length > 0 ? (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {country.topAttractions.map((poi) => (
+                      <AttractionCard key={poi.name} poi={poi} />
                   ))}
                 </div>
-              </div>
-            </div>
-          </div>
+            ) : (
+                <Card>
+                  <p className="text-[var(--text-muted)]">
+                    Ainda não há atrações listadas para este país.
+                  </p>
+                </Card>
+            )}
+          </Section>
 
+          {/* Cidades */}
+          <Section id="cities" eyebrow="Onde ir" title="Cidades principais" icon={Building2}>
+            {country.majorCities.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {country.majorCities.map((city) => (
+                      <span
+                          key={city}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2 text-sm font-medium text-[var(--text-body)]"
+                      >
+                  <MapPin className="h-4 w-4 text-[var(--brand)]" />
+                        {city}
+                </span>
+                  ))}
+                </div>
+            ) : (
+                <Card>
+                  <p className="text-[var(--text-muted)]">Sem cidades listadas.</p>
+                </Card>
+            )}
+          </Section>
         </div>
-
       </div>
-    </div>
   );
 }
