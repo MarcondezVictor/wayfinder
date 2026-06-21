@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
+import SmartImage from "@/components/SmartImage";
 import Link from "next/link";
 import {
   Compass,
@@ -189,14 +189,12 @@ function AttractionCard({ poi }: { poi: PointOfInterest }) {
   return (
       <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)]">
         <div className="relative aspect-[16/10] w-full bg-[var(--bg-subtle)]">
-          {/* Imagens de atrações podem vir de domínios variados; uso <img> simples
-            para não depender de images.remotePatterns no next.config.ts */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* Procura automaticamente a foto certa do local pelo nome (atrações têm
+            os dados de imagem mais fracos); placeholder se nada resultar. */}
+          <SmartImage
               src={poi.imageUrl}
               alt={poi.name}
-              loading="lazy"
-              className="h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
         <div className="p-4">
@@ -397,13 +395,12 @@ export default function CountryPage() {
         {/* HERO full-bleed */}
         <header className="relative">
           <div className="relative h-[58vh] min-h-[420px] w-full">
-            <Image
-                src={country.imageUrl}
+            <SmartImage
+                src={`/covers/${country.isoCode.toLowerCase()}.jpg`}
+                fallbackSrc={country.imageUrl}
                 alt={country.name}
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
+                eager
+                className="absolute inset-0 h-full w-full object-cover"
             />
             {/* Gradiente escuro para legibilidade — sempre escuro, logo texto branco
               é legível em ambos os temas (não é uma superfície "temável"). */}

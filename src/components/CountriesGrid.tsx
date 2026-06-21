@@ -1,133 +1,132 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import SmartImage from '@/components/SmartImage'
 import { useState } from 'react'
 import type { CountrySchema } from '@/lib/countries-data'
 
 interface CountriesGridProps {
-  countries: CountrySchema[]
-  search?: string
+    countries: CountrySchema[]
+    search?: string
 }
 
 const CONTINENTS = [
-  { value: 'All', label: 'Todos' },
-  { value: 'Europa', label: 'Europa' },
-  { value: 'Ásia', label: 'Ásia' },
-  { value: 'África', label: 'África' },
-  { value: 'América do Norte', label: 'América do Norte' },
-  { value: 'América do Sul', label: 'América do Sul' },
-  { value: 'Oceânia', label: 'Oceânia' },
+    { value: 'All', label: 'Todos' },
+    { value: 'Europa', label: 'Europa' },
+    { value: 'Ásia', label: 'Ásia' },
+    { value: 'África', label: 'África' },
+    { value: 'América do Norte', label: 'América do Norte' },
+    { value: 'América do Sul', label: 'América do Sul' },
+    { value: 'Oceânia', label: 'Oceânia' },
 ]
 
 export default function CountriesGrid({ countries, search = '' }: CountriesGridProps) {
-  const router = useRouter()
-  const [activeContinent, setActiveContinent] = useState<string>('All')
+    const router = useRouter()
+    const [activeContinent, setActiveContinent] = useState<string>('All')
 
-  const filtered = activeContinent === 'All'
-      ? countries
-      : countries.filter(c => c.continent === activeContinent)
+    const filtered = activeContinent === 'All'
+        ? countries
+        : countries.filter(c => c.continent === activeContinent)
 
-  const term = search.trim().toLowerCase()
-  const displayed = term
-      ? filtered.filter(c =>
-          c.name.toLowerCase().includes(term) ||
-          c.continent.toLowerCase().includes(term)
-      )
-      : filtered
+    const term = search.trim().toLowerCase()
+    const displayed = term
+        ? filtered.filter(c =>
+            c.name.toLowerCase().includes(term) ||
+            c.continent.toLowerCase().includes(term)
+        )
+        : filtered
 
-  return (
-      <div className="w-full max-w-7xl px-6 lg:px-8 py-12 flex flex-col gap-8 items-center">
-        {/* Tabs de continente */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          {CONTINENTS.map((tab) => {
-            const isActive = activeContinent === tab.value
-            return (
-                <button
-                    key={tab.value}
-                    onClick={() => setActiveContinent(tab.value)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 border ${
-                        isActive
-                            ? 'bg-[var(--brand)] text-white border-[var(--brand)]'
-                            : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text-primary)]'
-                    }`}
-                >
-                  {tab.label}
-                </button>
-            )
-          })}
-        </div>
-
-        {/* Grid de Cards ou Estado Vazio */}
-        {displayed.length === 0 ? (
-            <div className="text-center py-20 text-[var(--text-muted)]">
-              <p className="text-lg">Nenhum país encontrado.</p>
-              <button
-                  onClick={() => setActiveContinent('All')}
-                  className="mt-4 text-[var(--accent)] underline text-sm hover:text-[var(--accent-hover)] transition-colors"
-              >
-                Limpar filtros
-              </button>
+    return (
+        <div className="w-full max-w-7xl px-6 lg:px-8 py-12 flex flex-col gap-8 items-center">
+            {/* Tabs de continente */}
+            <div className="flex flex-wrap gap-2 justify-center">
+                {CONTINENTS.map((tab) => {
+                    const isActive = activeContinent === tab.value
+                    return (
+                        <button
+                            key={tab.value}
+                            onClick={() => setActiveContinent(tab.value)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 border ${
+                                isActive
+                                    ? 'bg-[var(--brand)] text-white border-[var(--brand)]'
+                                    : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text-primary)]'
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    )
+                })}
             </div>
-        ) : (
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {displayed.map(country => {
-                const costDaily = Math.round(
-                    country.avgHotelPrice + country.avgMealPrice * 2 + country.avgTransportCost
-                )
 
-                return (
-                    <div
-                        key={country.id}
-                        onClick={() => router.push(`/country/${country.slug}`)}
-                        className="cursor-pointer rounded-2xl overflow-hidden bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm hover:shadow-md hover:border-[var(--border)] transition-all duration-200 group"
+            {/* Grid de Cards ou Estado Vazio */}
+            {displayed.length === 0 ? (
+                <div className="text-center py-20 text-[var(--text-muted)]">
+                    <p className="text-lg">Nenhum país encontrado.</p>
+                    <button
+                        onClick={() => setActiveContinent('All')}
+                        className="mt-4 text-[var(--accent)] underline text-sm hover:text-[var(--accent-hover)] transition-colors"
                     >
-                      {/* Foto principal */}
-                      <div className="relative h-44 w-full bg-[var(--bg-subtle)]">
-                        <Image
-                            src={country.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80'}
-                            alt={country.name}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 25vw"
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        {/* Bandeira SVG no canto inferior esquerdo da foto */}
-                        <div className="absolute bottom-2 left-2">
-                          <img
-                              src={`/flags/${country.isoCode.toLowerCase()}.svg`}
-                              alt={`Bandeira de ${country.name}`}
-                              className="w-8 h-5 object-cover rounded-sm shadow"
-                          />
-                        </div>
-                      </div>
+                        Limpar filtros
+                    </button>
+                </div>
+            ) : (
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {displayed.map(country => {
+                        const costDaily = Math.round(
+                            country.avgHotelPrice + country.avgMealPrice * 2 + country.avgTransportCost
+                        )
 
-                      {/* Conteúdo do card */}
-                      <div className="p-4">
-                        <div className="flex items-start justify-between mb-1 gap-2">
-                          <h3 className="font-bold text-[var(--text-primary)] text-lg leading-tight">
-                            {country.name}
-                          </h3>
-                          <span className="text-xs bg-[var(--brand-subtle)] text-[var(--brand)] px-2 py-0.5 rounded-full shrink-0">
+                        return (
+                            <div
+                                key={country.id}
+                                onClick={() => router.push(`/country/${country.slug}`)}
+                                className="cursor-pointer rounded-2xl overflow-hidden bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm hover:shadow-md hover:border-[var(--border)] transition-all duration-200 group"
+                            >
+                                {/* Foto principal */}
+                                <div className="relative h-44 w-full bg-[var(--bg-subtle)]">
+                                    <SmartImage
+                                        src={`/covers/${country.isoCode.toLowerCase()}.jpg`}
+                                        fallbackSrc={country.imageUrl}
+                                        alt={country.name}
+                                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                    {/* Bandeira SVG no canto inferior esquerdo da foto */}
+                                    <div className="absolute bottom-2 left-2">
+                                        <img
+                                            src={`/flags/${country.isoCode.toLowerCase()}.svg`}
+                                            alt={`Bandeira de ${country.name}`}
+                                            className="w-8 h-5 object-cover rounded-sm shadow"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Conteúdo do card */}
+                                <div className="p-4">
+                                    <div className="flex items-start justify-between mb-1 gap-2">
+                                        <h3 className="font-bold text-[var(--text-primary)] text-lg leading-tight">
+                                            {country.name}
+                                        </h3>
+                                        <span className="text-xs bg-[var(--brand-subtle)] text-[var(--brand)] px-2 py-0.5 rounded-full shrink-0">
                       {country.continent}
                     </span>
-                        </div>
-                        <p className="text-sm text-[var(--text-muted)] mb-3">
-                          🏛 {country.capital}
-                        </p>
-                        <div className="flex items-center justify-between text-sm border-t border-[var(--border-subtle)] pt-3 mt-1">
+                                    </div>
+                                    <p className="text-sm text-[var(--text-muted)] mb-3">
+                                        🏛 {country.capital}
+                                    </p>
+                                    <div className="flex items-center justify-between text-sm border-t border-[var(--border-subtle)] pt-3 mt-1">
                     <span className="text-[var(--text-body)]">
                       🛡 Segurança: <strong>{country.safetyScore}/10</strong>
                     </span>
-                          <span className="text-[var(--text-body)] font-semibold">
+                                        <span className="text-[var(--text-body)] font-semibold">
                       ~€{costDaily}/dia
                     </span>
-                        </div>
-                      </div>
-                    </div>
-                )
-              })}
-            </div>
-        )}
-      </div>
-  )
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+        </div>
+    )
 }
