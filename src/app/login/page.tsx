@@ -49,7 +49,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center text-center gap-2">
           <Link href="/" className="flex items-center gap-2 group mb-2">
             <Image
-              src="/logo.svg"
+              src="/icon-192.png"
               alt="WayFinder"
               width={28}
               height={28}
