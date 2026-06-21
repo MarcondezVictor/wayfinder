@@ -185,14 +185,15 @@ function Chip({ children }: { children: ReactNode }) {
   );
 }
 
-function AttractionCard({ poi }: { poi: PointOfInterest }) {
+function AttractionCard({ poi, iso, index }: { poi: PointOfInterest; iso: string; index: number }) {
   return (
       <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)]">
         <div className="relative aspect-[16/10] w-full bg-[var(--bg-subtle)]">
-          {/* Procura automaticamente a foto certa do local pelo nome (atrações têm
-            os dados de imagem mais fracos); placeholder se nada resultar. */}
+          {/* Foto local do monumento (ex.: /attractions/pt-1.jpg). Se ainda não
+            existir, usa o imageUrl da BD e, em último caso, o placeholder. */}
           <SmartImage
-              src={poi.imageUrl}
+              src={`/attractions/${iso.toLowerCase()}-${index + 1}.jpg`}
+              fallbackSrc={poi.imageUrl}
               alt={poi.name}
               className="absolute inset-0 h-full w-full object-cover"
           />
@@ -660,8 +661,8 @@ export default function CountryPage() {
           <Section id="attractions" eyebrow="Não perder" title="Atrações" icon={Camera}>
             {country.topAttractions.length > 0 ? (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {country.topAttractions.map((poi) => (
-                      <AttractionCard key={poi.name} poi={poi} />
+                  {country.topAttractions.map((poi, i) => (
+                      <AttractionCard key={poi.name} poi={poi} iso={country.isoCode} index={i} />
                   ))}
                 </div>
             ) : (
