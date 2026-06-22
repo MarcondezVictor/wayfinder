@@ -49,7 +49,14 @@ export default function ResetPasswordPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      const messages: Record<string, string> = {
+        "Password should be at least 6 characters.": "A palavra-passe deve ter pelo menos 6 caracteres.",
+        "Password should contain at least one character of each: abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ, 0123456789.": "A palavra-passe deve conter letras maiúsculas, minúsculas e números.",
+        "Auth session missing!": "Sessão expirada. Por favor, solicite um novo link de recuperação.",
+        "Token has expired or is invalid": "O link de recuperação expirou ou é inválido. Solicite um novo.",
+        "New password should be different from the old password.": "A nova palavra-passe deve ser diferente da atual.",
+      };
+      setErrorMsg(messages[error.message] ?? "Ocorreu um erro. Por favor, tente novamente.");
       return;
     }
 

@@ -552,7 +552,7 @@ export default function CountryPage() {
           {/* Entrada & Vistos */}
           <Section
               id="entry"
-              eyebrow="Antes de partir"
+              eyebrow="Para cidadãos portugueses"
               title="Entrada & Vistos"
               icon={Stamp}
           >
