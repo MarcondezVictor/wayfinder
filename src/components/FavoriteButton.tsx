@@ -22,17 +22,21 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
       return;
     }
     let cancelled = false;
-    supabase
-      .from("favorites")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("country_id", countryId)
-      .then(({ data, error }) => {
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("favorites")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("country_id", countryId);
         if (cancelled) return;
         if (!error && data && data.length > 0) setIsFavorite(true);
-      })
-      .catch((err) => console.error("Error checking favorite status:", err))
-      .finally(() => { if (!cancelled) setLoading(false); });
+      } catch (err) {
+        console.error("Error checking favorite status:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
     return () => { cancelled = true; };
   }, [user, countryId]);
 
