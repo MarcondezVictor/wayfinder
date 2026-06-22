@@ -13,7 +13,7 @@ Plataforma de planeamento de viagens que agrega, num só lugar, informação sob
 - **Comparar países** — confrontar dois destinos lado a lado com sistema de pontuação ponderada e sliders de prioridade
 - **Dashboard pessoal** — lista de destinos guardados com estatísticas (continente mais frequente, país mais barato)
 - **Autenticação** — registo e login com Supabase Auth
-- **Tema claro/escuro** — alternância de tema persistente
+
 
 ---
 

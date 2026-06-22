@@ -82,17 +82,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Torre de Belém (Lisboa)",
         description: "Monumento gótico manuelino que servia de fortificação e ponto de partida para os Descobrimentos marítimos.",
-        imageUrl: "https://images.unsplash.com/photo-1509840841025-9088ba78a826?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/pt-1.jpg",
       },
       {
         name: "Palácio da Pena (Sintra)",
         description: "Exponente máximo do romantismo arquitetónico português no topo da serra de Sintra.",
-        imageUrl: "https://images.unsplash.com/photo-1579970080444-bd9eed0e7bf6?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/pt-2.jpg",
       },
       {
         name: "Ponte Luís I (Porto)",
         description: "Ponte metálica em arco de dois tabuleiros ligando o Porto a Vila Nova de Gaia sobre o rio Douro.",
-        imageUrl: "https://images.unsplash.com/photo-1552074284-5e88ef1aef18?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/pt-3.jpg",
       }
     ],
     majorCities: ["Lisboa", "Porto", "Coimbra", "Braga", "Faro"],
@@ -101,7 +101,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 8,
     transportQualityScore: 8,
     healthcareQualityScore: 9,
-    imageUrl: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/pt.jpg",
     flagEmoji: "🇵🇹",
     tagline: "Terra de descobridores, praias douradas e história vibrante.",
     description: "Portugal junta um legado cultural e histórico profundo a um dos melhores climas da Europa. Célebre pelo fado, pela hospitalidade, pela gastronomia rica em mariscos e pelos pastéis de nata, o país atrai cada vez mais estudantes, nómadas digitais e viajantes de todo o mundo."
@@ -133,17 +133,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Cristo Redentor (Rio de Janeiro)",
         description: "Estátua art déco gigante no topo do morro do Corcovado, de onde se vê toda a baía do Rio.",
-        imageUrl: "https://images.unsplash.com/photo-1564659995183-715fab39a6ec?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/br-1.jpg",
       },
       {
         name: "Cataratas do Iguaçu (Paraná)",
         description: "O maior sistema de quedas de água do mundo, rodeado por uma floresta tropical biodiversa.",
-        imageUrl: "https://images.unsplash.com/photo-1549693578-d683be217e58?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/br-2.jpg",
       },
       {
         name: "Pelourinho (Salvador)",
         description: "Centro histórico de Salvador com ricas fachadas coloniais portuguesas e manifestações da cultura afro-brasileira.",
-        imageUrl: "https://images.unsplash.com/photo-1599408162145-899009b4c110?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/br-3.jpg",
       }
     ],
     majorCities: ["São Paulo", "Rio de Janeiro", "Salvador", "Belo Horizonte", "Curitiba"],
@@ -152,7 +152,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 7,
     transportQualityScore: 5,
     healthcareQualityScore: 6,
-    imageUrl: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/br.jpg",
     flagEmoji: "🇧🇷",
     tagline: "Ritmo, praias tropicais e a maior floresta do planeta.",
     description: "O Brasil é uma explosão de energia, diversidade cultural e belezas naturais sem paralelo. Da imensidão verde da Amazónia às praias do Rio de Janeiro, o país é famoso pela sua música, paixão pelo futebol, churrasco e uma das comunidades mais alegres do mundo."
@@ -184,17 +184,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Catedral de Santa Sofia (Kyiv)",
         description: "Monumento medieval excecional fundado no século XI, famoso pelas suas cúpulas douradas e mosaicos bizantinos originais.",
-        imageUrl: "https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/ua-1.jpg",
       },
       {
         name: "Centro Histórico de Lviv",
         description: "Uma jóia da Europa de Leste com calçadas de paralelepípedos, arquitetura renascentista e uma cultura de café lendária.",
-        imageUrl: "https://images.unsplash.com/photo-1569429597341-39e1ff51e604?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/ua-2.jpg",
       },
       {
         name: "Montanhas dos Cárpatos",
         description: "Florestas densas de pinheiros, rios límpidos e a cultura tradicional Hutsul na região montanhosa a oeste do país.",
-        imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/ua-3.jpg",
       }
     ],
     majorCities: ["Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro"],
@@ -203,7 +203,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 8,
     transportQualityScore: 7,
     healthcareQualityScore: 7,
-    imageUrl: "https://images.unsplash.com/photo-1561542320-9a18cd340469?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/ua.jpg",
     flagEmoji: "🇺🇦",
     tagline: "Corações corajosos, cúpulas douradas e campos de trigo dourados.",
     description: "A Ucrânia é a terra dos contrastes culturais na Europa Oriental. Conhecida pelas suas magníficas catedrais de cúpulas brilhantes, história cossaca, festivais folclóricos e um ecossistema tecnológico altamente dinâmico e resiliente."
@@ -235,17 +235,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Torre Eiffel (Paris)",
         description: "O maior ícone francês do mundo, uma estrutura monumental de ferro construída em 1889 na margem do rio Sena.",
-        imageUrl: "https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/fr-1.jpg",
       },
       {
         name: "Palácio de Versalhes",
         description: "Antiga residência dos reis de França, famosa pelos seus salões espelhados deslumbrantes e jardins geométricos.",
-        imageUrl: "https://images.unsplash.com/photo-1508849789987-4e5333c12b78?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/fr-2.jpg",
       },
       {
         name: "Mont Saint-Michel (Normandia)",
         description: "Ilha rochosa fortificada com uma abadia gótica medieval espetacular cercada por uma das marés mais extremas da Europa.",
-        imageUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/fr-3.jpg",
       }
     ],
     majorCities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
@@ -254,7 +254,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 9,
     transportQualityScore: 9,
     healthcareQualityScore: 10,
-    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/fr.jpg",
     flagEmoji: "🇫🇷",
     tagline: "O centro global da arte, culinária fina, moda e romance.",
     description: "França tem sido o destino turístico mais popular do mundo devido ao seu inestimável património artístico, moda de alta-costura, culinária gourmet requintada e regiões vinícolas famosas. Do charme metropolitano parisiense às vinhas do sul, oferece experiências extraordinárias."
@@ -286,17 +286,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Sagrada Família (Barcelona)",
         description: "A colossal basílica de Antoni Gaudí, expoente máximo do modernismo catalão ainda em conclusão.",
-        imageUrl: "https://images.unsplash.com/photo-1587381420270-3e1a5b9e6904?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/es-1.jpg",
       },
       {
         name: "Alhambra (Granada)",
         description: "Magnífico palácio e fortaleza mourisca que testemunha o apogeu da arte islâmica medieval em Espanha.",
-        imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/es-2.jpg",
       },
       {
         name: "Plaza de España (Sevilha)",
         description: "Belo palácio e canal semi-circular construído em 1928 que exibe o esplendor da azulejaria andaluza.",
-        imageUrl: "https://images.unsplash.com/photo-1523531294919-4bea7c65e894?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/es-3.jpg",
       }
     ],
     majorCities: ["Madrid", "Barcelona", "Sevilla", "Valencia", "Bilbao"],
@@ -305,7 +305,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 8,
     transportQualityScore: 8,
     healthcareQualityScore: 9,
-    imageUrl: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/es.jpg",
     flagEmoji: "🇪🇸",
     tagline: "Cultura andaluza, monumentos medievais e sol eterno.",
     description: "A Espanha junta sol, história e o estilo de vida vibrante das suas ruas. Conhecida pelas noites de tapas, siestas, festivais espetaculares, arquitetura mourisca requintada e praias mediterrânicas, é uma escolha imperdível para residir ou passear."
@@ -337,17 +337,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Estátua da Liberdade (New York)",
         description: "Monumento icónico na Liberty Island que recebia os barcos de imigrantes na baía de Nova Iorque.",
-        imageUrl: "https://images.unsplash.com/photo-1522083165195-3427ec0297be?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/us-1.jpg",
       },
       {
         name: "Grand Canyon (Arizona)",
         description: "Uma das maiores maravilhas naturais do mundo esculpida pelo rio Colorado com impressionantes penhascos vermelhos.",
-        imageUrl: "https://images.unsplash.com/photo-1615551043360-33de8b5f410c?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/us-2.jpg",
       },
       {
         name: "Ponte Golden Gate (San Francisco)",
         description: "Suspensa sobre o estreito de Golden Gate, uma das pontes mais reconhecíveis do planeta com a sua cor laranja característica.",
-        imageUrl: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/us-3.jpg",
       }
     ],
     majorCities: ["New York", "Los Angeles", "Chicago", "Miami", "San Francisco"],
@@ -356,7 +356,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 9,
     transportQualityScore: 6,
     healthcareQualityScore: 8,
-    imageUrl: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/us.jpg",
     flagEmoji: "🇺🇸",
     tagline: "Grandes metrópoles, cultura pop global e estradas cinematográficas.",
     description: "Os Estados Unidos são sinónimo de imensidão e dinamismo. Lar de indústrias inteiras de cinema, inovação tecnológica, parques de diversão de classe mundial e parques nacionais impressionantes, o país oferece contrastes urbanos e geográficos inesquecíveis."
@@ -388,17 +388,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Monte Fuji",
         description: "O pico vulcânico mais alto do país, símbolo da identidade cultural japonesa envolto em neve na maior parte do ano.",
-        imageUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/jp-1.jpg",
       },
       {
         name: "Santuário Fushimi Inari (Kyoto)",
         description: "Famoso trilho de mais de 10.000 portões torii cor-de-laranja vibrantes que sobem a montanha sagrada.",
-        imageUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/jp-2.jpg",
       },
       {
         name: "Cruzamento de Shibuya (Tóquio)",
         description: "A passadeira de peões mais movimentada do mundo, localizada no centro tecnológico da metrópole asiática.",
-        imageUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/jp-3.jpg",
       }
     ],
     majorCities: ["Tokyo", "Kyoto", "Osaka", "Sapporo", "Fukuoka"],
@@ -407,7 +407,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 9,
     transportQualityScore: 10,
     healthcareQualityScore: 9,
-    imageUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/jp.jpg",
     flagEmoji: "🇯🇵",
     tagline: "Tecnologia de ponta fundida com tradições milenares.",
     description: "O Japão fascina pela união perfeita entre o passado e o futuro. Aqui poderá encontrar templos de madeira silenciosos ao lado de arranha-céus cobertos de néon e robôs. Com uma gastronomia de alta qualidade técnica e a melhor rede de comboios de alta velocidade, é um refúgio seguro e fascinante."
@@ -439,17 +439,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Big Ben & Parlamento (Londres)",
         description: "A torre do relógio Elizabeth Tower e a sede do governo britânico nas margens do rio Tamisa.",
-        imageUrl: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/gb-1.jpg",
       },
       {
         name: "Castelo de Edimburgo",
         description: "Fortaleza histórica imponente que domina o horizonte da capital da Escócia no topo do vulcânico Castle Rock.",
-        imageUrl: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/gb-2.jpg",
       },
       {
         name: "Stonehenge (Wiltshire)",
         description: "Círculo misterioso de monólitos gigantescos de pedra construído no período neolítico em Salisbury Plain.",
-        imageUrl: "https://images.unsplash.com/photo-1507731739823-5e881400e28e?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/gb-3.jpg",
       }
     ],
     majorCities: ["London", "Edinburgh", "Manchester", "Birmingham", "Glasgow"],
@@ -458,7 +458,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 9,
     transportQualityScore: 8,
     healthcareQualityScore: 9,
-    imageUrl: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/gb.jpg",
     flagEmoji: "🇬🇧",
     tagline: "Castelos medievais, palácios reais e paisagens bucólicas espetaculares.",
     description: "O Reino Unido guarda séculos de história nas suas ruas medievais, catedrais góticas imponentes e castelos reais. Lar de uma das maiores indústrias literárias, de música e teatros do mundo, proporciona rotas rurais deslumbrantes misturadas a capitais globais dinâmicas."
@@ -490,17 +490,17 @@ export const countriesData: CountrySchema[] = [
       {
         name: "Coliseu (Roma)",
         description: "O maior anfiteatro da Antiguidade clássica construído pelo Império Romano no centro histórico da capital.",
-        imageUrl: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/it-1.jpg",
       },
       {
         name: "Duomo de Florença",
         description: "A catedral de Santa Maria del Fiore com a sua monumental cúpula de tijolos vermelhos projetada por Filippo Brunelleschi.",
-        imageUrl: "https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/it-2.jpg",
       },
       {
         name: "Costa Amalfitana (Campânia)",
         description: "Região costeira montanhosa deslumbrante de vilas coloridas de pescadores suspensas sobre o mar azul-safira.",
-        imageUrl: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=600&q=80",
+        imageUrl: "/attractions/it-3.jpg",
       }
     ],
     majorCities: ["Roma", "Milão", "Florença", "Veneza", "Nápoles"],
@@ -509,7 +509,7 @@ export const countriesData: CountrySchema[] = [
     internetQualityScore: 8,
     transportQualityScore: 7,
     healthcareQualityScore: 9,
-    imageUrl: "https://images.unsplash.com/photo-1529260830199-445826f3fbe5?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "/covers/it.jpg",
     flagEmoji: "🇮🇹",
     tagline: "Ruínas antigas lendárias, canais românticos e a melhor comida do mundo.",
     description: "Itália é o país com maior número de patrimónios da UNESCO do planeta. Lar da renascença artística, das ruínas romanas imponentes, de museus inesquecíveis e de uma das culinárias mais amadas mundialmente (pizza, pasta, gelatos e vinhos de exceção), oferece charme cultural a cada recanto."
