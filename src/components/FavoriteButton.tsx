@@ -16,35 +16,24 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
   const [loading, setLoading] = useState(true);
   const [animating, setAnimating] = useState(false);
 
-  async function checkFavoriteState() {
-    if (!user) {
+  useEffect(() => {
+    if (!user || !countryId) {
       setLoading(false);
       return;
     }
-    try {
-      const { data, error } = await supabase
-          .from("favorites")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("country_id", countryId);
-
-      if (!error && data && data.length > 0) {
-        setIsFavorite(true);
-      }
-    } catch (err) {
-      console.error("Error checking favorite status:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (user && countryId) {
-      checkFavoriteState();
-    } else {
-      setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let cancelled = false;
+    supabase
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("country_id", countryId)
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (!error && data && data.length > 0) setIsFavorite(true);
+      })
+      .catch((err) => console.error("Error checking favorite status:", err))
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [user, countryId]);
 
   async function toggleFavorite() {
@@ -80,8 +69,8 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
         if (error) throw error;
         setIsFavorite(true);
       }
-    } catch (err: any) {
-      console.error("Error toggling favorite item:", err.message);
+    } catch (err) {
+      console.error("Error toggling favorite item:", err);
     }
   }
 
@@ -89,7 +78,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
     return (
         <button
             disabled
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border)] py-3 text-sm font-medium text-[var(--text-muted)] opacity-60"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border)] px-5 py-3 text-sm font-medium text-[var(--text-muted)] opacity-60"
         >
           <Heart className="h-4 w-4 animate-pulse" />
           <span>A carregar...</span>
@@ -100,7 +89,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
   return (
       <button
           onClick={toggleFavorite}
-          className={`w-full flex items-center justify-center gap-2 rounded-md border py-3 text-sm font-medium shadow-sm transition-all active:scale-[0.97] cursor-pointer bg-[var(--bg-surface)] border-[var(--border)] ${
+          className={`w-full flex items-center justify-center gap-2 rounded-md border px-5 py-3 text-sm font-medium shadow-sm transition-all active:scale-[0.97] cursor-pointer bg-[var(--bg-surface)] border-[var(--border)] ${
               isFavorite
                   ? "text-[var(--danger)]"
                   : "text-[var(--text-faint)] hover:text-[var(--danger)]"

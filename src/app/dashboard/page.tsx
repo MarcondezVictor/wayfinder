@@ -28,7 +28,6 @@ export default function DashboardPage() {
 
   const [favLoading, setFavLoading] = useState(true);
   const [favorites, setFavorites] = useState<FavoriteWithCountry[]>([]);
-  const [imageError, setImageError] = useState(false);
 
   // Fetch favorites with robust loading state handling
   useEffect(() => {
@@ -63,11 +62,6 @@ export default function DashboardPage() {
     fetchFavorites();
   }, [user, loading]); // loading como dependência
 
-  // Reset image error state if the avatar url changes
-  useEffect(() => {
-    setImageError(false);
-  }, [profile?.avatar_url]);
-
   // Remove a favorite country
   const removeFavorite = async (countryId: string) => {
     try {
@@ -83,33 +77,7 @@ export default function DashboardPage() {
     }
   };
 
-  // Map travel styles to display badges with emojis
-  const travelStyleMap: Record<string, string> = {
-    "Turismo": "Turismo",
-    "Trabalho": "Trabalho",
-    "Estudos": "Estudos",
-    "Emigração": "Emigração",
-    "Nómada Digital": "Nómada Digital",
-  };
-
-  const travelStyleLabel = preferences?.preferred_travel_style
-      ? (travelStyleMap[preferences.preferred_travel_style] || preferences.preferred_travel_style)
-      : "🧳 Turismo";
-
-  // Initials for avatar fallback
-  const initials = useMemo(() => {
-    const name = profile?.full_name || "";
-    if (name) {
-      const parts = name.trim().split(/\s+/);
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      }
-      if (parts.length === 1 && parts[0]) {
-        return parts[0][0].toUpperCase();
-      }
-    }
-    return user?.email ? user.email[0].toUpperCase() : "?";
-  }, [profile, user]);
+  const travelStyleLabel = preferences?.preferred_travel_style || "🧳 Turismo";
 
   // Statistics calculation
   const stats = useMemo(() => {
@@ -238,20 +206,6 @@ export default function DashboardPage() {
           {/* Secção 1 — Perfil */}
           <section className="rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-              <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-[var(--brand-subtle)] shadow-sm bg-[var(--brand-subtle)] shrink-0 flex items-center justify-center relative">
-                {profile?.avatar_url && !imageError ? (
-                    <img
-                        src={profile.avatar_url}
-                        alt="Avatar"
-                        className="h-full w-full object-cover"
-                        onError={() => setImageError(true)}
-                    />
-                ) : (
-                    <span className="text-2xl font-bold text-[var(--brand)]">
-                  {initials}
-                </span>
-                )}
-              </div>
               <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-semibold tracking-wider text-[var(--brand)] uppercase">
                 Painel Pessoal
@@ -358,7 +312,8 @@ export default function DashboardPage() {
                         >
                           <div className="relative h-40 w-full overflow-hidden bg-[var(--bg-page)]">
                             <img
-                                src={country.image_url || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"}
+                                src={`/covers/${country.iso_code.toLowerCase()}.jpg`}
+                                onError={(e) => { if (country.image_url) (e.currentTarget as HTMLImageElement).src = country.image_url; }}
                                 alt={country.name}
                                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />

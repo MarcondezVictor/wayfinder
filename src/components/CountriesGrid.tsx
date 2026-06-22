@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import SmartImage from '@/components/SmartImage'
 import { useState } from 'react'
 import type { CountrySchema } from '@/lib/countries-data'
 
@@ -84,9 +83,9 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
                             >
                                 {/* Foto principal */}
                                 <div className="relative h-44 w-full bg-[var(--bg-subtle)]">
-                                    <SmartImage
+                                    <img
                                         src={`/covers/${country.isoCode.toLowerCase()}.jpg`}
-                                        fallbackSrc={country.imageUrl}
+                                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = country.imageUrl }}
                                         alt={country.name}
                                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />

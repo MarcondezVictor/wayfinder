@@ -99,14 +99,9 @@ export default function LoginPage() {
 
           {/* Password */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Palavra-passe
-              </label>
-              <a href="#" className="text-xs font-medium text-[var(--accent)] hover:underline">
-                Esqueceu a palavra-passe?
-              </a>
-            </div>
+            <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              Palavra-passe
+            </label>
             <input
               type="password"
               placeholder="Insira a sua palavra-passe"

@@ -109,7 +109,3 @@ export async function getCountryBySlug(slug: string): Promise<CountrySchema | nu
     return local || null;
   }
 }
-
-export async function seedDatabase() {
-  console.log("seedDatabase has been disabled to prevent duplicate entries and RLS errors.");
-}

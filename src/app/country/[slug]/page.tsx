@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useParams } from "next/navigation";
-import SmartImage from "@/components/SmartImage";
 import Link from "next/link";
 import {
   Compass,
+  Info,
   Stamp,
   ShieldCheck,
   Wallet,
@@ -31,15 +31,15 @@ import {
   FileText,
   Syringe,
   Globe,
+  ChevronRight,
   Loader2,
   ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
 
-import { getCountryBySlug } from "@/lib/db-countries";
+import { getCountryBySlug, getCountries } from "@/lib/db-countries";
 import type { CountrySchema, PointOfInterest } from "@/lib/countries-data";
 import FavoriteButton from "@/components/FavoriteButton";
-
 /* ----------------------------------------------------------------------------
  * Navegação de secções (cada id corresponde a uma <Section/> com o mesmo id)
  * -------------------------------------------------------------------------- */
@@ -191,9 +191,9 @@ function AttractionCard({ poi, iso, index }: { poi: PointOfInterest; iso: string
         <div className="relative aspect-[16/10] w-full bg-[var(--bg-subtle)]">
           {/* Foto local do monumento (ex.: /attractions/pt-1.jpg). Se ainda não
             existir, usa o imageUrl da BD e, em último caso, o placeholder. */}
-          <SmartImage
+          <img
               src={`/attractions/${iso.toLowerCase()}-${index + 1}.jpg`}
-              fallbackSrc={poi.imageUrl}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = poi.imageUrl }}
               alt={poi.name}
               className="absolute inset-0 h-full w-full object-cover"
           />
@@ -297,6 +297,7 @@ export default function CountryPage() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<string>(SECTIONS[0].id);
   const [flagError, setFlagError] = useState(false);
+  const [related, setRelated] = useState<CountrySchema[]>([]);
 
   // Carregar país por slug
   useEffect(() => {
@@ -339,6 +340,29 @@ export default function CountryPage() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
+  }, [country]);
+
+  // Carregar outros países do mesmo continente (para a secção "Continuar a explorar")
+  useEffect(() => {
+    if (!country) {
+      setRelated([]);
+      return;
+    }
+    let cancelled = false;
+    getCountries()
+        .then((all) => {
+          if (cancelled) return;
+          const sameContinent = all
+              .filter((c) => c.continent === country.continent && c.slug !== country.slug)
+              .slice(0, 6);
+          setRelated(sameContinent);
+        })
+        .catch(() => {
+          if (!cancelled) setRelated([]);
+        });
+    return () => {
+      cancelled = true;
+    };
   }, [country]);
 
   const flagSrc = useMemo(
@@ -396,11 +420,10 @@ export default function CountryPage() {
         {/* HERO full-bleed */}
         <header className="relative">
           <div className="relative h-[58vh] min-h-[420px] w-full">
-            <SmartImage
+            <img
                 src={`/covers/${country.isoCode.toLowerCase()}.jpg`}
-                fallbackSrc={country.imageUrl}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = country.imageUrl }}
                 alt={country.name}
-                eager
                 className="absolute inset-0 h-full w-full object-cover"
             />
             {/* Gradiente escuro para legibilidade — sempre escuro, logo texto branco
@@ -524,6 +547,7 @@ export default function CountryPage() {
               </Card>
             </div>
           </Section>
+
 
           {/* Entrada & Vistos */}
           <Section
@@ -694,6 +718,42 @@ export default function CountryPage() {
                 </Card>
             )}
           </Section>
+
+          {/* Continuar a explorar — links para outros países do mesmo continente */}
+          {related.length > 0 && (
+              <section id="explore" className="scroll-mt-32">
+                <div className="mb-1 flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-[var(--brand)]" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--brand)]">
+                Continuar a explorar
+              </span>
+                </div>
+                <h2 className="mb-5 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+                  Mais em {country.continent}
+                </h2>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {related.map((c) => (
+                      <Link
+                          key={c.slug}
+                          href={`/country/${c.slug}`}
+                          className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-subtle)]"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={`/flags/${c.isoCode.toLowerCase()}.svg`}
+                            alt={`Bandeira de ${c.name}`}
+                            className="h-8 w-12 shrink-0 rounded-sm object-cover shadow"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate font-medium text-[var(--text-primary)]">{c.name}</div>
+                          <div className="truncate text-xs text-[var(--text-muted)]">{c.capital}</div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-faint)] transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                  ))}
+                </div>
+              </section>
+          )}
         </div>
       </div>
   );
