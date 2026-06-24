@@ -4,18 +4,17 @@ export default function Footer() {
   return (
       <footer className="w-full bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] py-6 px-6 mt-auto">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center">
-          {/* Marca */}
+          {/* Brand */}
           <div className="flex items-center gap-2">
             <Image src="/icon-192.png" alt="WayFinder" width={20} height={20} />
             <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">
             wayfinder
           </span>
-            <span className="text-xs text-[var(--text-faint)]">© 2026</span>
+            <span className="text-xs text-[var(--text-faint)]"></span>
           </div>
 
-          {/* Equipa (compacto, numa linha) */}
           <p className="text-xs text-[var(--text-muted)]">
-            Projeto Integrado I · Victor Hugo · Martim Marcelino · Eric Cardoso · Rodrigo Andrade
+            © 2026 Victor Hugo
           </p>
 
           {/* GitHub */}

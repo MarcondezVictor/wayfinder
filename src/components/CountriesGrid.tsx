@@ -10,13 +10,13 @@ interface CountriesGridProps {
 }
 
 const CONTINENTS = [
-    { value: 'All', label: 'Todos' },
-    { value: 'Europa', label: 'Europa' },
-    { value: 'Ásia', label: 'Ásia' },
-    { value: 'África', label: 'África' },
-    { value: 'América do Norte', label: 'América do Norte' },
-    { value: 'América do Sul', label: 'América do Sul' },
-    { value: 'Oceânia', label: 'Oceânia' },
+    { value: 'All', label: 'All' },
+    { value: 'Europa', label: 'Europe' },
+    { value: 'Ásia', label: 'Asia' },
+    { value: 'África', label: 'Africa' },
+    { value: 'América do Norte', label: 'North America' },
+    { value: 'América do Sul', label: 'South America' },
+    { value: 'Oceânia', label: 'Oceania' },
 ]
 
 export default function CountriesGrid({ countries, search = '' }: CountriesGridProps) {
@@ -37,7 +37,7 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
 
     return (
         <div className="w-full max-w-7xl px-6 lg:px-8 py-12 flex flex-col gap-8 items-center">
-            {/* Tabs de continente */}
+            {/* Continent filter tabs */}
             <div className="flex flex-wrap gap-2 justify-center">
                 {CONTINENTS.map((tab) => {
                     const isActive = activeContinent === tab.value
@@ -60,12 +60,12 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
             {/* Grid de Cards ou Estado Vazio */}
             {displayed.length === 0 ? (
                 <div className="text-center py-20 text-[var(--text-muted)]">
-                    <p className="text-lg">Nenhum país encontrado.</p>
+                    <p className="text-lg">No countries found.</p>
                     <button
                         onClick={() => setActiveContinent('All')}
                         className="mt-4 text-[var(--accent)] underline text-sm hover:text-[var(--accent-hover)] transition-colors"
                     >
-                        Limpar filtros
+                        Clear filters
                     </button>
                 </div>
             ) : (
@@ -89,17 +89,17 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
                                         alt={country.name}
                                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
-                                    {/* Bandeira SVG no canto inferior esquerdo da foto */}
+                                    {/* Flag SVG in the bottom-left of the cover photo */}
                                     <div className="absolute bottom-2 left-2">
                                         <img
                                             src={`/flags/${country.isoCode.toLowerCase()}.svg`}
-                                            alt={`Bandeira de ${country.name}`}
+                                            alt={`Flag of ${country.name}`}
                                             className="w-8 h-5 object-cover rounded-sm shadow"
                                         />
                                     </div>
                                 </div>
 
-                                {/* Conteúdo do card */}
+                                {/* Card content */}
                                 <div className="p-4">
                                     <div className="flex items-start justify-between mb-1 gap-2">
                                         <h3 className="font-bold text-[var(--text-primary)] text-lg leading-tight">
@@ -114,7 +114,7 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
                                     </p>
                                     <div className="flex items-center justify-between text-sm border-t border-[var(--border-subtle)] pt-3 mt-1">
                     <span className="text-[var(--text-body)]">
-                      🛡 Segurança: <strong>{country.safetyScore}/10</strong>
+                      🛡 Safety: <strong>{country.safetyScore}/10</strong>
                     </span>
                                         <span className="text-[var(--text-body)] font-semibold">
                       ~€{costDaily}/dia

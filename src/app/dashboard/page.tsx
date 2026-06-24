@@ -31,12 +31,10 @@ export default function DashboardPage() {
 
   // Fetch favorites with robust loading state handling
   useEffect(() => {
-    // Se loading do AuthProvider ainda está a decorrer, aguardar
     if (loading) return;
 
-    // Se não há utilizador, não há favoritos para buscar
     if (!user) {
-      setFavLoading(false); // CRÍTICO: resolver mesmo quando user=null
+      setFavLoading(false);
       return;
     }
 
@@ -55,12 +53,12 @@ export default function DashboardPage() {
       } catch (err) {
         console.error("Favorites fetch error:", err);
       } finally {
-        setFavLoading(false); // SEMPRE corre
+        setFavLoading(false);
       }
     };
 
     fetchFavorites();
-  }, [user, loading]); // loading como dependência
+  }, [user, loading]);
 
   // Remove a favorite country
   const removeFavorite = async (countryId: string) => {
@@ -139,29 +137,26 @@ export default function DashboardPage() {
     };
   }, [favorites]);
 
-  // AuthProvider ainda a carregar
   if (loading) {
     return (
         <div className="flex-grow flex flex-col items-center justify-center p-20 gap-4 bg-[var(--bg-page)]">
           <div className="flex h-12 w-12 animate-spin rounded-full border-4 border-[var(--brand)] border-t-transparent" />
-          <span className="text-sm font-medium text-[var(--text-muted)]">A carregar o seu painel...</span>
+          <span className="text-sm font-medium text-[var(--text-muted)]">Loading your dashboard...</span>
         </div>
     );
   }
 
-  // Não autenticado (fallback — proxy.ts devia ter bloqueado)
   if (!user) {
     router.push("/login");
     return null;
   }
 
-  // Favoritos a carregar
   if (favLoading) {
     return (
         <div className="w-full min-h-screen bg-[var(--bg-page)] pb-20">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 flex flex-col gap-8">
 
-            {/* Skeleton de perfil */}
+            {/* Profile skeleton */}
             <section className="rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 animate-pulse">
               <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
                 <div className="h-20 w-20 rounded-full bg-[var(--bg-subtle)] shrink-0" />
@@ -174,7 +169,7 @@ export default function DashboardPage() {
               <div className="h-10 bg-[var(--bg-subtle)] rounded w-32 shrink-0" />
             </section>
 
-            {/* Skeleton de favoritos */}
+            {/* Favourites skeleton */}
             <section className="flex flex-col gap-6 animate-pulse">
               <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
                 <div className="h-8 bg-[var(--bg-subtle)] rounded w-64" />
@@ -198,17 +193,16 @@ export default function DashboardPage() {
     );
   }
 
-  // Conteúdo real (Dashboard)
   return (
       <div className="w-full min-h-screen bg-[var(--bg-page)] pb-20">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 flex flex-col gap-8">
 
-          {/* Secção 1 — Perfil */}
+          {/* Section 1 — Profile */}
           <section className="rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
               <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-semibold tracking-wider text-[var(--brand)] uppercase">
-                Painel Pessoal
+                Personal Dashboard
               </span>
                 <h1 className="text-2xl font-bold text-[var(--text-primary)] leading-tight">
                   {profile?.full_name || user.email?.split("@")[0]}
@@ -221,7 +215,7 @@ export default function DashboardPage() {
 
             <div className="flex flex-col items-center sm:items-end gap-1.5 shrink-0">
             <span className="text-xs font-semibold text-[var(--text-faint)] uppercase tracking-wider">
-              Estilo de Viagem
+              Travel Style
             </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-subtle)] px-4 py-2 text-sm font-semibold text-[var(--brand)] border border-[var(--brand-subtle)]">
               {travelStyleLabel}
@@ -229,7 +223,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* Secção 3 — Stats (se houver favoritos) */}
+          {/* Section 2 — Stats (when there are favourites) */}
           {stats && (
               <section className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up">
                 <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
@@ -238,10 +232,10 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex flex-col">
                 <span className="text-xs font-medium text-[var(--text-faint)] uppercase tracking-wider">
-                  Total de Favoritos
+                  Total Saved
                 </span>
                     <span className="text-xl font-bold text-[var(--text-primary)] mt-0.5">
-                  {stats.total} {stats.total === 1 ? "destino" : "destinos"}
+                  {stats.total} {stats.total === 1 ? "destination" : "destinations"}
                 </span>
                   </div>
                 </div>
@@ -252,7 +246,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex flex-col">
                 <span className="text-xs font-medium text-[var(--text-faint)] uppercase tracking-wider">
-                  Continente Frequente
+                  Top Continent
                 </span>
                     <span className="text-xl font-bold text-[var(--text-primary)] mt-0.5">
                   {stats.mostFrequentContinent}
@@ -266,7 +260,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex flex-col">
                 <span className="text-xs font-medium text-[var(--text-faint)] uppercase tracking-wider">
-                  País Mais Barato
+                  Cheapest Country
                 </span>
                     <span className="text-xl font-bold text-[var(--text-primary)] mt-0.5 flex items-center gap-1.5">
                   <span>{stats.cheapestCountryFlag}</span>
@@ -280,15 +274,15 @@ export default function DashboardPage() {
               </section>
           )}
 
-          {/* Secção 2 — Favoritos */}
+          {/* Section 3 — Saved destinations */}
           <section className="flex flex-col gap-6">
             <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
               <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
-                Os Seus Destinos Guardados
+                Your Saved Destinations
               </h2>
               {!favLoading && favorites.length > 0 && (
                   <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                {favorites.length} Países
+                {favorites.length} Countries
               </span>
               )}
             </div>
@@ -329,7 +323,7 @@ export default function DashboardPage() {
                                   removeFavorite(country.id);
                                 }}
                                 className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)]/90 hover:bg-[var(--danger-bg)] text-[var(--text-muted)] hover:text-[var(--danger)] border border-[var(--border-subtle)] shadow-sm hover:scale-105 transition-all cursor-pointer"
-                                title="Remover dos favoritos"
+                                title="Remove from favourites"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -348,11 +342,11 @@ export default function DashboardPage() {
                             <div className="grid grid-cols-2 gap-2 mt-2 pt-3 border-t border-[var(--border-subtle)] text-[11px] font-medium text-[var(--text-muted)]">
                               <div className="flex items-center gap-1.5 p-2 rounded-lg bg-[var(--success-bg)] text-[var(--success)]">
                                 <Shield className="h-3.5 w-3.5 text-[var(--success)] shrink-0" />
-                                <span>Segurança: {country.safety_score}/10</span>
+                                <span>Safety: {country.safety_score}/10</span>
                               </div>
                               <div className="flex items-center gap-1.5 p-2 rounded-lg bg-[var(--warning-bg)] text-[var(--warning)]">
                                 <Coins className="h-3.5 w-3.5 text-[var(--warning)] shrink-0" />
-                                <span>Custo: {dailyCost}€/dia</span>
+                                <span>Cost: {dailyCost}€/day</span>
                               </div>
                             </div>
 
@@ -360,7 +354,7 @@ export default function DashboardPage() {
                                 href={`/country/${country.slug}`}
                                 className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-[var(--bg-subtle)] hover:bg-[var(--brand-subtle)] text-[var(--text-body)] hover:text-[var(--brand)] py-2.5 text-xs font-semibold border border-[var(--border-subtle)] hover:border-[var(--brand-subtle)] transition-all"
                             >
-                              <span>Ver Detalhes</span>
+                              <span>View Details</span>
                               <ArrowRight className="h-3.5 w-3.5" />
                             </Link>
                           </div>
@@ -374,16 +368,16 @@ export default function DashboardPage() {
                     <Heart className="h-7 w-7" />
                   </div>
                   <h3 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
-                    Nenhum destino guardado
+                    No saved destinations yet
                   </h3>
                   <p className="text-xs text-[var(--text-muted)] max-w-sm font-normal leading-relaxed">
-                    Consulte o nosso mapa interativo global e adicione os seus destinos preferidos aos favoritos para os ver listados aqui!
+                    Browse the interactive map and heart any destination to save it here!
                   </p>
                   <Link
                       href="/"
                       className="mt-2 flex items-center gap-1.5 rounded-xl bg-[var(--brand)] hover:bg-[var(--brand-hover)] text-white px-5 py-2.5 text-xs font-semibold shadow-sm transition-all"
                   >
-                    <span>Voltar ao Mapa</span>
+                    <span>Back to Map</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

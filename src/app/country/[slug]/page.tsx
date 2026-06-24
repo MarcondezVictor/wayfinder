@@ -44,21 +44,21 @@ import FavoriteButton from "@/components/FavoriteButton";
  * Navegação de secções (cada id corresponde a uma <Section/> com o mesmo id)
  * -------------------------------------------------------------------------- */
 const SECTIONS: { id: string; label: string; icon: LucideIcon }[] = [
-  { id: "overview", label: "Visão geral", icon: Compass },
-  { id: "entry", label: "Entrada & Vistos", icon: Stamp },
-  { id: "safety", label: "Segurança", icon: ShieldCheck },
-  { id: "costs", label: "Custos", icon: Wallet },
-  { id: "climate", label: "Clima", icon: CloudSun },
-  { id: "metrics", label: "Métricas", icon: Gauge },
-  { id: "attractions", label: "Atrações", icon: Camera },
-  { id: "cities", label: "Cidades", icon: Building2 },
+  { id: "overview", label: "Overview", icon: Compass },
+  { id: "entry", label: "Entry & Visas", icon: Stamp },
+  { id: "safety", label: "Safety", icon: ShieldCheck },
+  { id: "costs", label: "Costs", icon: Wallet },
+  { id: "climate", label: "Climate", icon: CloudSun },
+  { id: "metrics", label: "Metrics", icon: Gauge },
+  { id: "attractions", label: "Attractions", icon: Camera },
+  { id: "cities", label: "Cities", icon: Building2 },
 ];
 
 /* ----------------------------------------------------------------------------
  * Helpers
  * -------------------------------------------------------------------------- */
 const eur = (value: number) =>
-    new Intl.NumberFormat("pt-PT", {
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0,
@@ -218,16 +218,16 @@ function CostCalculator({ country }: { country: CountrySchema }) {
   const total = dailyEstimate * Math.max(1, days);
 
   const breakdown: { icon: LucideIcon; label: string; value: number }[] = [
-    { icon: Hotel, label: "Alojamento (1 noite)", value: country.avgHotelPrice },
-    { icon: Utensils, label: "Refeições (2/dia)", value: country.avgMealPrice * 2 },
-    { icon: Bus, label: "Transporte (1 dia)", value: country.avgTransportCost },
+    { icon: Hotel, label: "Accommodation (1 night)", value: country.avgHotelPrice },
+    { icon: Utensils, label: "Meals (2/day)", value: country.avgMealPrice * 2 },
+    { icon: Bus, label: "Transport (1 day)", value: country.avgTransportCost },
   ];
 
   return (
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-faint)]">
-            Custo diário estimado
+            Estimated daily cost
           </h3>
           <div className="space-y-3">
             {breakdown.map((row) => (
@@ -253,13 +253,13 @@ function CostCalculator({ country }: { country: CountrySchema }) {
         <Card className="flex flex-col justify-between">
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-faint)]">
-              Estima a tua viagem
+              Plan your trip
             </h3>
             <label
                 htmlFor="days"
                 className="mb-2 block text-sm text-[var(--text-muted)]"
             >
-              Número de dias
+              Number of days
             </label>
             <input
                 id="days"
@@ -272,14 +272,14 @@ function CostCalculator({ country }: { country: CountrySchema }) {
           </div>
           <div className="mt-5 rounded-xl border border-[var(--brand-subtle)] bg-[var(--brand-subtle)] p-4">
             <div className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
-              Total estimado · {Math.max(1, days)}{" "}
-              {Math.max(1, days) === 1 ? "dia" : "dias"}
+              Estimated total · {Math.max(1, days)}{" "}
+              {Math.max(1, days) === 1 ? "day" : "days"}
             </div>
             <div className="mt-1 text-3xl font-bold text-[var(--brand)]">
               {eur(total)}
             </div>
             <p className="mt-1 text-xs text-[var(--text-faint)]">
-              Estimativa indicativa, sem voos.
+              Indicative estimate, flights not included.
             </p>
           </div>
         </Card>
@@ -299,7 +299,7 @@ export default function CountryPage() {
   const [flagError, setFlagError] = useState(false);
   const [related, setRelated] = useState<CountrySchema[]>([]);
 
-  // Carregar país por slug
+  // Load country by slug
   useEffect(() => {
     let cancelled = false;
     async function load() {
@@ -321,7 +321,7 @@ export default function CountryPage() {
     };
   }, [slug]);
 
-  // Realçar a secção ativa ao fazer scroll
+  // Highlight the active section on scroll
   useEffect(() => {
     if (!country) return;
     const observer = new IntersectionObserver(
@@ -342,7 +342,7 @@ export default function CountryPage() {
     return () => observer.disconnect();
   }, [country]);
 
-  // Carregar outros países do mesmo continente (para a secção "Continuar a explorar")
+  // Load other countries in the same continent for the "Keep exploring" section
   useEffect(() => {
     if (!country) {
       setRelated([]);
@@ -384,7 +384,7 @@ export default function CountryPage() {
         <div className="grid min-h-[60vh] place-items-center text-[var(--text-muted)]">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-7 w-7 animate-spin" />
-            <span>A carregar país…</span>
+            <span>Loading country…</span>
           </div>
         </div>
     );
@@ -397,17 +397,17 @@ export default function CountryPage() {
           <div className="max-w-md text-center">
             <Globe className="mx-auto mb-4 h-10 w-10 text-[var(--text-faint)]" />
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-              País não encontrado
+              Country not found
             </h1>
             <p className="mt-2 text-[var(--text-muted)]">
-              Não encontrámos nenhum país para este endereço.
+              We couldn&apos;t find a country for this address.
             </p>
             <Link
                 href="/"
                 className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand)] px-4 py-2.5 font-medium text-[var(--bg-surface)] transition-colors hover:bg-[var(--brand-hover)]"
             >
               <ArrowLeft className="h-4 w-4" />
-              Voltar à página inicial
+              Back to home
             </Link>
           </div>
         </div>
@@ -440,7 +440,7 @@ export default function CountryPage() {
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img
                               src={flagSrc}
-                              alt={`Bandeira de ${country.name}`}
+                              alt={`Flag of ${country.name}`}
                               className="h-full w-full object-cover"
                               onError={() => setFlagError(true)}
                           />
@@ -516,7 +516,7 @@ export default function CountryPage() {
         {/* CONTEÚDO */}
         <div className="mx-auto max-w-5xl space-y-16 px-4 py-12 sm:px-6 lg:px-8">
           {/* Visão geral */}
-          <Section id="overview" eyebrow="O essencial" title="Visão geral" icon={Compass}>
+          <Section id="overview" eyebrow="The essentials" title="Overview" icon={Compass}>
             <div className="grid gap-4 lg:grid-cols-3">
               <Card className="lg:col-span-2">
                 <p className="leading-relaxed text-[var(--text-body)]">
@@ -526,22 +526,22 @@ export default function CountryPage() {
               <Card>
                 <InfoRow
                     icon={Users}
-                    label="População"
-                    value={country.population.toLocaleString("pt-PT")}
+                    label="Population"
+                    value={country.population.toLocaleString("en-US")}
                 />
                 <InfoRow
                     icon={Languages}
-                    label="Idiomas"
+                    label="Languages"
                     value={country.languages}
                 />
                 <InfoRow
                     icon={CalendarDays}
-                    label="Melhor altura para visitar"
+                    label="Best time to visit"
                     value={country.bestTimeVisit}
                 />
                 <InfoRow
                     icon={Plug}
-                    label="Tomada elétrica"
+                    label="Power plug type"
                     value={country.powerPlugType}
                 />
               </Card>
@@ -552,20 +552,20 @@ export default function CountryPage() {
           {/* Entrada & Vistos */}
           <Section
               id="entry"
-              eyebrow="Para cidadãos portugueses"
-              title="Entrada & Vistos"
+              eyebrow="For Portuguese citizens"
+              title="Entry &amp; Visas"
               icon={Stamp}
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <Card>
                 <InfoRow
                     icon={Stamp}
-                    label="Visto"
+                    label="Visa"
                     value={country.visaRequirements}
                 />
                 <InfoRow
                     icon={FileText}
-                    label="Passaporte"
+                    label="Passport"
                     value={country.passportRequirements}
                 />
               </Card>
@@ -577,7 +577,7 @@ export default function CountryPage() {
                 />
                 <InfoRow
                     icon={Syringe}
-                    label="Vacinas"
+                    label="Vaccinations"
                     value={country.vaccineRequirements}
                 />
               </Card>
@@ -585,20 +585,20 @@ export default function CountryPage() {
           </Section>
 
           {/* Segurança */}
-          <Section id="safety" eyebrow="Tranquilidade" title="Segurança" icon={ShieldCheck}>
+          <Section id="safety" eyebrow="Peace of mind" title="Safety" icon={ShieldCheck}>
             <div className="grid gap-4 sm:grid-cols-2">
               <Card>
                 <div className="mb-4">
                   <Metric
                       icon={ShieldCheck}
-                      label="Índice de segurança"
+                      label="Safety score"
                       value={country.safetyScore}
                       max={10}
                   />
                 </div>
                 <InfoRow
                     icon={Phone}
-                    label="Números de emergência"
+                    label="Emergency numbers"
                     value={country.emergencyNumbers}
                 />
               </Card>
@@ -607,7 +607,7 @@ export default function CountryPage() {
                   <div className="rounded-2xl border border-[var(--warning-border)] bg-[var(--warning-bg)] p-5 sm:p-6">
                     <div className="mb-2 flex items-center gap-2 font-semibold text-[var(--warning)]">
                       <AlertTriangle className="h-5 w-5" />
-                      Avisos de viagem
+                      Travel warnings
                     </div>
                     <p className="leading-relaxed text-[var(--text-body)]">
                       {country.travelWarnings}
@@ -617,7 +617,7 @@ export default function CountryPage() {
                   <Card className="flex items-center gap-3">
                     <ShieldCheck className="h-5 w-5 text-[var(--success)]" />
                     <span className="text-[var(--text-body)]">
-                  Sem avisos de viagem ativos.
+                  No active travel warnings.
                 </span>
                   </Card>
               )}
@@ -625,23 +625,23 @@ export default function CountryPage() {
           </Section>
 
           {/* Custos */}
-          <Section id="costs" eyebrow="Orçamento (EUR)" title="Custos" icon={Wallet}>
+          <Section id="costs" eyebrow="Budget (EUR)" title="Costs" icon={Wallet}>
             <CostCalculator country={country} />
             <Card className="mt-4">
               <Metric
                   icon={Coins}
-                  label="Índice de custo de vida"
+                  label="Cost of living index"
                   value={country.costLivingIndex}
                   max={120}
               />
               <p className="mt-2 text-xs text-[var(--text-faint)]">
-                Escala 1–120 (referência relativa entre países).
+                Scale 1–120 (relative reference across countries).
               </p>
             </Card>
           </Section>
 
           {/* Clima */}
-          <Section id="climate" eyebrow="Quando ir" title="Clima" icon={CloudSun}>
+          <Section id="climate" eyebrow="When to go" title="Climate" icon={CloudSun}>
             <Card>
               <div className="mb-4 flex items-center gap-2">
                 <Thermometer className="h-5 w-5 text-[var(--accent)]" />
@@ -658,8 +658,8 @@ export default function CountryPage() {
           {/* Métricas práticas */}
           <Section
               id="metrics"
-              eyebrow="No terreno"
-              title="Métricas práticas"
+              eyebrow="On the ground"
+              title="Practical metrics"
               icon={Gauge}
           >
             <Card className="grid gap-5 sm:grid-cols-3">
@@ -670,19 +670,19 @@ export default function CountryPage() {
               />
               <Metric
                   icon={Bus}
-                  label="Transportes"
+                  label="Transport"
                   value={country.transportQualityScore}
               />
               <Metric
                   icon={HeartPulse}
-                  label="Saúde"
+                  label="Healthcare"
                   value={country.healthcareQualityScore}
               />
             </Card>
           </Section>
 
           {/* Atrações */}
-          <Section id="attractions" eyebrow="Não perder" title="Atrações" icon={Camera}>
+          <Section id="attractions" eyebrow="Must-see" title="Attractions" icon={Camera}>
             {country.topAttractions.length > 0 ? (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {country.topAttractions.map((poi, i) => (
@@ -692,14 +692,14 @@ export default function CountryPage() {
             ) : (
                 <Card>
                   <p className="text-[var(--text-muted)]">
-                    Ainda não há atrações listadas para este país.
+                    No attractions listed for this country yet.
                   </p>
                 </Card>
             )}
           </Section>
 
           {/* Cidades */}
-          <Section id="cities" eyebrow="Onde ir" title="Cidades principais" icon={Building2}>
+          <Section id="cities" eyebrow="Where to go" title="Major cities" icon={Building2}>
             {country.majorCities.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {country.majorCities.map((city) => (
@@ -714,22 +714,22 @@ export default function CountryPage() {
                 </div>
             ) : (
                 <Card>
-                  <p className="text-[var(--text-muted)]">Sem cidades listadas.</p>
+                  <p className="text-[var(--text-muted)]">No cities listed.</p>
                 </Card>
             )}
           </Section>
 
-          {/* Continuar a explorar — links para outros países do mesmo continente */}
+          {/* Keep exploring — links to other countries in the same continent */}
           {related.length > 0 && (
               <section id="explore" className="scroll-mt-32">
                 <div className="mb-1 flex items-center gap-2">
                   <Globe className="h-4 w-4 text-[var(--brand)]" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-[var(--brand)]">
-                Continuar a explorar
+                Keep exploring
               </span>
                 </div>
                 <h2 className="mb-5 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
-                  Mais em {country.continent}
+                  More in {country.continent}
                 </h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {related.map((c) => (
@@ -741,7 +741,7 @@ export default function CountryPage() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={`/flags/${c.isoCode.toLowerCase()}.svg`}
-                            alt={`Bandeira de ${c.name}`}
+                            alt={`Flag of ${c.name}`}
                             className="h-8 w-12 shrink-0 rounded-sm object-cover shadow"
                         />
                         <div className="min-w-0 flex-1">

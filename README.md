@@ -1,91 +1,99 @@
-# Wayfinder
+# WayFinder
 
-Plataforma de planeamento de viagens que agrega, num só lugar, informação sobre vistos, custos, segurança e clima para países de todo o mundo. Desenvolvida como projeto integrado do Instituto Politécnico de Tomar.
+### Explore. Plan. Go.
 
----
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase)
 
-## Funcionalidades
-
-- **Mapa interativo** — explorar países diretamente no mapa mundial (amCharts 5)
-- **Pesquisa inteligente** — pesquisar por nome ou continente com resultados em tempo real
-- **Página de país** — visão geral, entrada & vistos, segurança, custos, clima, métricas de qualidade de vida, atrações e cidades principais
-- **Calculadora de viagem** — estimativa de custo total por número de dias
-- **Comparar países** — confrontar dois destinos lado a lado com sistema de pontuação ponderada e sliders de prioridade
-- **Dashboard pessoal** — lista de destinos guardados com estatísticas (continente mais frequente, país mais barato)
-- **Autenticação** — registo e login com Supabase Auth
-
+Travel information is scattered across dozens of websites. **WayFinder** brings it all into one place — search by country, explore an interactive world map, and get a clear picture of visa requirements, daily costs, safety scores and climate before you book.
 
 ---
 
-## Stack
+## Demo
 
-| Camada | Tecnologia |
+🔗 **Live app:** _[deploy link coming soon — Vercel]_
+
+---
+
+## Screenshots
+
+<!-- Add screenshots to docs/screenshots/ and reference them here -->
+
+![WayFinder screenshots](docs/screenshots/)
+
+> Screenshots folder: `docs/screenshots/` — add images here after deployment.
+
+---
+
+## Features
+
+- **Interactive world map** — click any highlighted country to jump straight to its detail page (powered by amCharts 5)
+- **Smart search** — real-time dropdown searching by country name, capital or continent
+- **Country page** — overview, entry & visas, safety, costs, climate, quality-of-life metrics, top attractions and major cities
+- **Trip cost calculator** — estimate total spend by number of days
+- **Country comparison** — compare two destinations side by side with a weighted scoring system and priority sliders
+- **Personal dashboard** — saved destinations with statistics (most-visited continent, cheapest saved country)
+- **Authentication** — sign up / sign in / password reset via Supabase Auth
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
 |---|---|
 | Framework | Next.js 16 (App Router) |
-| UI | Tailwind CSS v4 |
-| Ícones | Lucide React |
-| Mapa | amCharts 5 + amCharts Geodata |
-| Base de dados & Auth | Supabase (PostgreSQL + Row Level Security) |
-| Linguagem | TypeScript 5 |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 |
+| Icons | Lucide React |
+| Map | amCharts 5 + amCharts Geodata |
+| Database & Auth | Supabase (PostgreSQL + Row Level Security) |
+| Deployment | Vercel |
 
 ---
 
-## Estrutura do projeto
+## Getting Started
 
-```
-src/
-├── app/
-│   ├── page.tsx              # Página inicial (mapa + grid de países)
-│   ├── country/[slug]/       # Página de detalhe por país
-│   ├── compare/              # Ferramenta de comparação
-│   ├── dashboard/            # Painel pessoal do utilizador
-│   ├── login/                # Autenticação
-│   └── register/             # Registo de conta
-├── components/
-│   ├── AuthProvider.tsx      # Contexto de autenticação global
-│   ├── CountriesGrid.tsx     # Grid de países com filtro por continente
-│   ├── FavoriteButton.tsx    # Botão guardar/remover favorito
-│   ├── InteractiveMap.tsx    # Mapa amCharts
-│   ├── Navbar.tsx            # Navegação principal
-│   └── Searchbar.tsx         # Pesquisa com dropdown
-└── lib/
-    ├── db-countries.ts       # Queries Supabase com fallback local
-    ├── countries-data.ts     # Dataset local de fallback
-    └── supabase.ts           # Cliente Supabase
-public/
-├── covers/                   # Fotos de capa por país (ISO-2.jpg, ex: pt.jpg)
-├── attractions/              # Fotos de atrações (ISO-2-N.jpg, ex: pt-1.jpg)
-└── flags/                    # Bandeiras SVG por código ISO-2
-```
-
----
-
-## Configuração local
-
-### Pré-requisitos
+### Prerequisites
 
 - Node.js 18+
-- Conta Supabase (gratuita)
+- A free [Supabase](https://supabase.com) account
 
-### Variáveis de ambiente
-
-Criar um ficheiro `.env.local` na raiz do projeto:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-```
-
-### Instalar e correr
+### Clone & install
 
 ```bash
+git clone https://github.com/MarcondezVictor/WayFinder.git
+cd WayFinder
 npm install
+```
+
+### Environment variables
+
+Copy the example file and fill in your Supabase credentials:
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and set:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Your Supabase URL and anon key are found in **Supabase Dashboard → Project Settings → API**.
+
+### Run in development
+
+```bash
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) no browser.
+Open [http://localhost:3000](http://localhost:3000).
 
-### Build de produção
+### Production build
 
 ```bash
 npm run build
@@ -94,33 +102,82 @@ npm start
 
 ---
 
-## Base de dados (Supabase)
+## Project Structure
 
-As principais tabelas são:
+```
+src/
+├── app/
+│   ├── page.tsx                  # Home (map + country grid)
+│   ├── country/[slug]/           # Country detail page
+│   ├── compare/                  # Side-by-side comparison tool
+│   ├── dashboard/                # Personal saved-destinations dashboard
+│   ├── login/                    # Sign in
+│   ├── register/                 # Sign up
+│   ├── forgot-password/          # Password reset request
+│   └── reset-password/           # Set new password
+├── components/
+│   ├── AuthProvider.tsx          # Global auth context
+│   ├── CountriesGrid.tsx         # Country grid with continent filter
+│   ├── CountryFacts.tsx          # Extra facts from restcountries.com API
+│   ├── FavoriteButton.tsx        # Save / unsave a destination
+│   ├── InteractiveMap.tsx        # amCharts world map
+│   ├── Navbar.tsx                # Main navigation
+│   └── Searchbar.tsx             # Search dropdown
+└── lib/
+    ├── db-countries.ts           # Supabase queries with local fallback
+    ├── countries-data.ts         # Local fallback dataset
+    └── supabase.ts               # Supabase client
+public/
+├── covers/     # Country cover photos  (<iso2>.jpg, e.g. fr.jpg)
+├── attractions/ # Attraction photos    (<iso2>-<n>.jpg, e.g. fr-1.jpg)
+└── flags/      # SVG flags            (<iso2>.svg, e.g. fr.svg)
+```
 
-| Tabela | Descrição |
+---
+
+## Database
+
+SQL migration files live in `supabase/`:
+
+| File | Purpose |
 |---|---|
-| `countries` | Dados de todos os países (vistos, custos, clima, atrações, etc.) |
-| `profiles` | Perfil público do utilizador (nome, nacionalidade) |
-| `user_preferences` | Estilo de viagem preferido |
-| `favorites` | Relação utilizador ↔ país guardado |
+| `supabase/setup.sql` | Creates all tables, RLS policies and seed data |
+| `supabase/visa_update.sql` | Updates visa/passport/ETIAS data for all countries |
 
-Row Level Security está ativado — cada utilizador só acede aos seus próprios dados nas tabelas `profiles`, `user_preferences` e `favorites`.
+Run them in order in the **Supabase Dashboard → SQL Editor**.
 
----
+### Schema overview
 
-## Imagens
+| Table | Description |
+|---|---|
+| `countries` | All country data (visas, costs, climate, attractions, …) |
+| `profiles` | Public user profile (name, nationality) |
+| `user_preferences` | Preferred travel style |
+| `favorites` | User ↔ country saved relationship |
 
-As imagens são servidas localmente a partir de `/public`:
-
-- **Covers** — `/covers/<iso2>.jpg` (ex: `/covers/pt.jpg`) — foto de capa do país
-- **Atrações** — `/attractions/<iso2>-<n>.jpg` (ex: `/attractions/pt-1.jpg`) — foto de cada atração (índice a partir de 1)
-- **Bandeiras** — `/flags/<iso2>.svg` (ex: `/flags/pt.svg`)
-
-Se uma imagem local não existir, o componente usa o `image_url` guardado na base de dados como fallback.
+Row Level Security is enabled — each user only accesses their own rows in `profiles`, `user_preferences` and `favorites`.
 
 ---
 
-## Autores
+## Roadmap
 
-Projeto desenvolvido no âmbito da unidade curricular de Projeto Integrado 1 do curso de Engenharia Informática — Instituto Politécnico de Tomar.
+- [ ] Deploy to Vercel and add live link
+- [ ] Add more countries to the dataset
+- [ ] Mobile-optimised map experience
+- [ ] AI-powered trip recommendations
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Victor Hugo
+
+---
+
+## Author
+
+**Victor Hugo** — [github.com/MarcondezVictor](https://github.com/MarcondezVictor)
+
+---
+
+_Started as the final project for the Integrated Project I course at Instituto Politécnico de Tomar._

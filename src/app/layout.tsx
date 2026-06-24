@@ -14,7 +14,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "WayFinder",
-  description: "Planeia a tua próxima viagem",
+  description: "Explore. Plan. Go — visa info, costs, safety and climate for destinations worldwide.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
       <html
-          lang="pt"
+          lang="en"
           className={`${jakarta.variable} h-full antialiased dark`}
           suppressHydrationWarning
       >

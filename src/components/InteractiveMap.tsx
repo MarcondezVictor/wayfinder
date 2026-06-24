@@ -23,25 +23,25 @@ const COUNTRY_COLORS: Record<string, string> = {
 
 const COUNTRY_DATA = [
   { id: "PT", isoCode: "pt", countryName: "Portugal", slug: "portugal" },
-  { id: "BR", isoCode: "br", countryName: "Brasil", slug: "brazil" },
-  { id: "UA", isoCode: "ua", countryName: "Ucrânia", slug: "ukraine" },
-  { id: "FR", isoCode: "fr", countryName: "França", slug: "france" },
-  { id: "ES", isoCode: "es", countryName: "Espanha", slug: "spain" },
-  { id: "US", isoCode: "us", countryName: "Estados Unidos", slug: "united-states" },
-  { id: "JP", isoCode: "jp", countryName: "Japão", slug: "japan" },
-  { id: "GB", isoCode: "gb", countryName: "Reino Unido", slug: "united-kingdom" },
-  { id: "IT", isoCode: "it", countryName: "Itália", slug: "italy" },
-  { id: "SG", isoCode: "sg", countryName: "Singapura", slug: "singapore" },
+  { id: "BR", isoCode: "br", countryName: "Brazil", slug: "brazil" },
+  { id: "UA", isoCode: "ua", countryName: "Ukraine", slug: "ukraine" },
+  { id: "FR", isoCode: "fr", countryName: "France", slug: "france" },
+  { id: "ES", isoCode: "es", countryName: "Spain", slug: "spain" },
+  { id: "US", isoCode: "us", countryName: "United States", slug: "united-states" },
+  { id: "JP", isoCode: "jp", countryName: "Japan", slug: "japan" },
+  { id: "GB", isoCode: "gb", countryName: "United Kingdom", slug: "united-kingdom" },
+  { id: "IT", isoCode: "it", countryName: "Italy", slug: "italy" },
+  { id: "SG", isoCode: "sg", countryName: "Singapore", slug: "singapore" },
   { id: "IL", isoCode: "il", countryName: "Israel", slug: "israel" },
-  { id: "AE", isoCode: "ae", countryName: "Emirados Árabes Unidos", slug: "united-arab-emirates" },
-  { id: "MA", isoCode: "ma", countryName: "Marrocos", slug: "morocco" },
-  { id: "ZA", isoCode: "za", countryName: "África do Sul", slug: "south-africa" },
-  { id: "EG", isoCode: "eg", countryName: "Egito", slug: "egypt" },
-  { id: "AU", isoCode: "au", countryName: "Austrália", slug: "australia" },
-  { id: "NZ", isoCode: "nz", countryName: "Nova Zelândia", slug: "new-zealand" },
-  { id: "SE", isoCode: "se", countryName: "Suécia", slug: "sweden" },
+  { id: "AE", isoCode: "ae", countryName: "United Arab Emirates", slug: "united-arab-emirates" },
+  { id: "MA", isoCode: "ma", countryName: "Morocco", slug: "morocco" },
+  { id: "ZA", isoCode: "za", countryName: "South Africa", slug: "south-africa" },
+  { id: "EG", isoCode: "eg", countryName: "Egypt", slug: "egypt" },
+  { id: "AU", isoCode: "au", countryName: "Australia", slug: "australia" },
+  { id: "NZ", isoCode: "nz", countryName: "New Zealand", slug: "new-zealand" },
+  { id: "SE", isoCode: "se", countryName: "Sweden", slug: "sweden" },
   { id: "CL", isoCode: "cl", countryName: "Chile", slug: "chile" },
-  { id: "IS", isoCode: "is", countryName: "Islândia", slug: "iceland" },
+  { id: "IS", isoCode: "is", countryName: "Iceland", slug: "iceland" },
 ];
 
 function tooltipHtml(isoCode: string, countryName: string) {
@@ -158,7 +158,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
     });
 
     pointSeries.data.setAll([
-      { geometry: { type: "Point", coordinates: [103.8198, 1.3521] }, isoCode: "sg", countryName: "Singapura", slug: "singapore", id: "SG" },
+      { geometry: { type: "Point", coordinates: [103.8198, 1.3521] }, isoCode: "sg", countryName: "Singapore", slug: "singapore", id: "SG" },
       { geometry: { type: "Point", coordinates: [35.2137, 31.7683] }, isoCode: "il", countryName: "Israel", slug: "israel", id: "IL" },
     ]);
 

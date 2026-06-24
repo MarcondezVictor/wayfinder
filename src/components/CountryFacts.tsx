@@ -58,9 +58,9 @@ export default function CountryFacts({ isoCode }: { isoCode: string }) {
 
                 const idd =
                     c.idd?.root != null ? `${c.idd.root}${c.idd.suffixes?.[0] ?? ""}` : undefined;
-                const demonym = c.demonyms?.por?.m ?? c.demonyms?.eng?.m ?? undefined;
+                const demonym = c.demonyms?.eng?.m ?? c.demonyms?.por?.m ?? undefined;
                 const drivingSide =
-                    c.car?.side === "left" ? "Esquerda" : c.car?.side === "right" ? "Direita" : undefined;
+                    c.car?.side === "left" ? "Left" : c.car?.side === "right" ? "Right" : undefined;
 
                 setFacts({
                     officialName: c.name?.official,
@@ -103,20 +103,20 @@ export default function CountryFacts({ isoCode }: { isoCode: string }) {
     if (state === "error" || !facts) {
         return (
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-                <p className="text-sm text-[var(--text-muted)]">Dados adicionais indisponíveis de momento.</p>
+                <p className="text-sm text-[var(--text-muted)]">Additional data currently unavailable.</p>
             </div>
         );
     }
 
     const rows: { icon: LucideIcon; label: string; value?: string }[] = [
-        { icon: Globe2, label: "Nome oficial", value: facts.officialName },
-        { icon: MapPin, label: "Região", value: [facts.region, facts.subregion].filter(Boolean).join(" · ") || undefined },
-        { icon: Ruler, label: "Área", value: facts.area ? `${facts.area.toLocaleString("pt-PT")} km²` : undefined },
-        { icon: Users, label: "Gentílico", value: facts.demonym },
-        { icon: Phone, label: "Indicativo telefónico", value: facts.callingCode },
-        { icon: Clock, label: "Fusos horários", value: facts.timezones?.join(", ") },
-        { icon: Car, label: "Lado da condução", value: facts.drivingSide },
-        { icon: Link2, label: "Domínio de topo", value: facts.tld },
+        { icon: Globe2, label: "Official name", value: facts.officialName },
+        { icon: MapPin, label: "Region", value: [facts.region, facts.subregion].filter(Boolean).join(" · ") || undefined },
+        { icon: Ruler, label: "Area", value: facts.area ? `${facts.area.toLocaleString("en-US")} km²` : undefined },
+        { icon: Users, label: "Demonym", value: facts.demonym },
+        { icon: Phone, label: "Calling code", value: facts.callingCode },
+        { icon: Clock, label: "Time zones", value: facts.timezones?.join(", ") },
+        { icon: Car, label: "Driving side", value: facts.drivingSide },
+        { icon: Link2, label: "Top-level domain", value: facts.tld },
     ].filter((r) => r.value);
 
     return (
@@ -135,7 +135,7 @@ export default function CountryFacts({ isoCode }: { isoCode: string }) {
                     className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-body)] transition-colors hover:bg-[var(--bg-subtle)]"
                 >
                     <ExternalLink className="h-4 w-4" />
-                    Ver no Google Maps
+                    View on Google Maps
                 </a>
             )}
         </div>

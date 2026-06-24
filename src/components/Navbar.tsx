@@ -13,7 +13,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { name: "Comparar", href: "/compare" },
+    { name: "Compare", href: "/compare" },
     { name: "Dashboard", href: "/dashboard" },
   ];
 
@@ -69,7 +69,7 @@ export default function Navbar() {
                 onClick={signOut}
                 className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
               >
-                Sair
+                Sign out
               </button>
             </div>
           ) : (
@@ -78,13 +78,13 @@ export default function Navbar() {
                 href="/login"
                 className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
-                Entrar
+                Sign in
               </Link>
               <Link
                 href="/register"
                 className="text-sm font-medium text-white px-4 py-1.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors"
               >
-                Começar
+                Get started
               </Link>
             </div>
           )}
@@ -138,7 +138,7 @@ export default function Navbar() {
                 }}
                 className="text-left text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
               >
-                Sair
+                Sign out
               </button>
             </div>
           ) : (
@@ -148,14 +148,14 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
-                Entrar
+                Sign in
               </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileOpen(false)}
                 className="text-sm font-medium text-white px-4 py-1.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] text-center transition-colors"
               >
-                Começar
+                Get started
               </Link>
             </div>
           )}

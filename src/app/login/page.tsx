@@ -15,7 +15,7 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password) {
-      setErrorMsg("Por favor, preencha todos os campos.");
+      setErrorMsg("Please fill in all fields.");
       return;
     }
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
       return;
     }
 
-    setSuccessMsg("Autenticação efetuada com sucesso! Redirecionando...");
+    setSuccessMsg("Signed in successfully! Redirecting...");
     setTimeout(() => {
       window.location.href = "/dashboard";
     }, 1500);
@@ -44,7 +44,7 @@ export default function LoginPage() {
   return (
     <div className="flex-grow flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-page)] text-[var(--text-body)]">
       <div className="w-full max-w-md bg-[var(--bg-surface)] rounded-xl border border-[var(--border)] p-8 flex flex-col gap-6 shadow-sm">
-        
+
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-2">
           <Link href="/" className="flex items-center gap-2 group mb-2">
@@ -60,10 +60,10 @@ export default function LoginPage() {
             </span>
           </Link>
           <h2 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
-            Bem-vindo de volta!
+            Welcome back!
           </h2>
           <p className="text-sm text-[var(--text-muted)] font-normal">
-            Inicie sessão para ver e gerir os seus destinos salvos.
+            Sign in to view and manage your saved destinations.
           </p>
         </div>
 
@@ -81,15 +81,15 @@ export default function LoginPage() {
 
         {/* Form */}
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          
+
           {/* Email */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              Endereço de E-mail
+              Email Address
             </label>
             <input
               type="email"
-              placeholder="exemplo@email.com"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -100,11 +100,11 @@ export default function LoginPage() {
           {/* Password */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              Palavra-passe
+              Password
             </label>
             <input
               type="password"
-              placeholder="Insira a sua palavra-passe"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
@@ -115,7 +115,7 @@ export default function LoginPage() {
           {/* Forgot password */}
           <div className="text-right -mt-1">
             <Link href="/forgot-password" className="text-xs font-medium text-[var(--accent)] hover:text-[var(--accent-hover)]">
-              Esqueceu a palavra-passe?
+              Forgot your password?
             </Link>
           </div>
 
@@ -125,7 +125,7 @@ export default function LoginPage() {
             disabled={loading}
             className="text-sm font-medium text-white px-5 py-2.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors w-full cursor-pointer mt-2"
           >
-            {loading ? "A carregar..." : "Entrar na Conta"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
@@ -133,9 +133,9 @@ export default function LoginPage() {
 
         {/* Redirect to signup */}
         <div className="text-center text-xs font-medium text-[var(--text-muted)]">
-          Ainda não tem uma conta?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">
-            Crie uma conta gratuita
+            Create a free account
           </Link>
         </div>
       </div>

@@ -66,7 +66,7 @@ export default function SearchBar({ countries }: SearchBarProps) {
         <div ref={containerRef} className="relative w-full max-w-md">
             <input
                 type="text"
-                placeholder="Pesquisar país, capital ou continente..."
+                placeholder="Search country, capital or continent..."
                 value={query}
                 onChange={(e) => {
                     setQuery(e.target.value);
@@ -105,7 +105,7 @@ export default function SearchBar({ countries }: SearchBarProps) {
 
             {open && query.trim() && results.length === 0 && (
                 <div className="absolute z-50 mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-lg px-4 py-3 text-sm text-[var(--text-muted)] text-left">
-                    Nenhum país encontrado.
+                    No countries found.
                 </div>
             )}
         </div>

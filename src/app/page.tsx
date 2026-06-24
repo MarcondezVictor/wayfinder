@@ -25,10 +25,10 @@ export default function Home() {
         <section className="relative z-30 w-full flex justify-center bg-[var(--bg-page)]">
           <div className="w-full max-w-3xl px-6 pt-14 pb-6 flex flex-col items-center text-center">
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--text-primary)] mb-2">
-              Planeia a tua próxima viagem
+              Plan your next adventure
             </h1>
             <p className="text-base text-[var(--text-muted)] mb-7 max-w-xl leading-relaxed">
-              Vistos, custos, segurança e clima — explora o mapa ou pesquisa um país.
+              Visas, costs, safety and climate — explore the map or search for a country.
             </p>
             <SearchBar countries={countries} />
           </div>
@@ -50,7 +50,7 @@ export default function Home() {
         <section className="w-full flex justify-center bg-[var(--bg-surface)] border-t border-[var(--border-subtle)]">
           {loading ? (
               <div className="w-full max-w-7xl px-6 lg:px-8 py-20 text-center text-[var(--text-muted)]">
-                <p className="text-lg">Carregando destinos...</p>
+                <p className="text-lg">Loading destinations...</p>
               </div>
           ) : (
               <CountriesGrid countries={countries} />

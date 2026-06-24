@@ -42,7 +42,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
 
   async function toggleFavorite() {
     if (!user) {
-      alert("Por favor, inicie sessão para guardar os seus destinos preferidos!");
+      alert("Please sign in to save your favourite destinations!");
       window.location.href = "/login";
       return;
     }
@@ -85,7 +85,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border)] px-5 py-3 text-sm font-medium text-[var(--text-muted)] opacity-60"
         >
           <Heart className="h-4 w-4 animate-pulse" />
-          <span>A carregar...</span>
+          <span>Loading...</span>
         </button>
     );
   }
@@ -105,7 +105,7 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
             } ${animating ? "scale-150 animate-bounce" : ""}`}
         />
         <span>
-        {isFavorite ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
+        {isFavorite ? "Remove from Favourites" : "Add to Favourites"}
       </span>
       </button>
   );

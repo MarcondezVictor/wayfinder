@@ -16,12 +16,12 @@ export default function RegisterPage() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password || !fullName) {
-      setErrorMsg("Por favor, preencha todos os campos.");
+      setErrorMsg("Please fill in all fields.");
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg("A palavra-passe deve conter pelo menos 6 caracteres.");
+      setErrorMsg("Password must be at least 6 characters.");
       return;
     }
 
@@ -46,7 +46,7 @@ export default function RegisterPage() {
       return;
     }
 
-    setSuccessMsg("Conta criada com sucesso! Redirecionando para o painel...");
+    setSuccessMsg("Account created! Redirecting to your dashboard...");
     setTimeout(() => {
       window.location.href = "/dashboard";
     }, 1500);
@@ -58,7 +58,7 @@ export default function RegisterPage() {
   return (
     <div className="flex-grow flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-page)] text-[var(--text-body)]">
       <div className="w-full max-w-md bg-[var(--bg-surface)] rounded-xl border border-[var(--border)] p-8 flex flex-col gap-6 shadow-sm">
-        
+
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-2">
           <Link href="/" className="flex items-center gap-2 group mb-2">
@@ -74,10 +74,10 @@ export default function RegisterPage() {
             </span>
           </Link>
           <h2 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
-            Criar Nova Conta
+            Create an Account
           </h2>
           <p className="text-sm text-[var(--text-muted)] font-normal">
-            Registe-se em segundos para guardar os seus destinos de eleição.
+            Sign up in seconds to save your favourite destinations.
           </p>
         </div>
 
@@ -95,15 +95,15 @@ export default function RegisterPage() {
 
         {/* Form */}
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
-          
+
           {/* Full Name */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              Nome Completo
+              Full Name
             </label>
             <input
               type="text"
-              placeholder="Insira o seu nome"
+              placeholder="Enter your name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               disabled={loading}
@@ -114,11 +114,11 @@ export default function RegisterPage() {
           {/* Email */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              Endereço de E-mail
+              Email Address
             </label>
             <input
               type="email"
-              placeholder="exemplo@email.com"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -129,11 +129,11 @@ export default function RegisterPage() {
           {/* Password */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-              Palavra-passe
+              Password
             </label>
             <input
               type="password"
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
@@ -147,7 +147,7 @@ export default function RegisterPage() {
             disabled={loading}
             className="text-sm font-medium text-white px-5 py-2.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors w-full cursor-pointer mt-2"
           >
-            {loading ? "A carregar..." : "Registrar Conta"}
+            {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
@@ -155,9 +155,9 @@ export default function RegisterPage() {
 
         {/* Redirect to signin */}
         <div className="text-center text-xs font-medium text-[var(--text-muted)]">
-          Já possui uma conta?{" "}
+          Already have an account?{" "}
           <Link href="/login" className="font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">
-            Inicie sessão aqui
+            Sign in here
           </Link>
         </div>
       </div>

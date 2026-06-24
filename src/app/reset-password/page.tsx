@@ -29,15 +29,15 @@ export default function ResetPasswordPage() {
     e.preventDefault();
 
     if (!password || !confirm) {
-      setErrorMsg("Por favor, preencha todos os campos.");
+      setErrorMsg("Please fill in all fields.");
       return;
     }
     if (password.length < 6) {
-      setErrorMsg("A palavra-passe deve ter pelo menos 6 caracteres.");
+      setErrorMsg("Password must be at least 6 characters.");
       return;
     }
     if (password !== confirm) {
-      setErrorMsg("As palavras-passe não coincidem.");
+      setErrorMsg("Passwords do not match.");
       return;
     }
 
@@ -50,17 +50,17 @@ export default function ResetPasswordPage() {
 
     if (error) {
       const messages: Record<string, string> = {
-        "Password should be at least 6 characters.": "A palavra-passe deve ter pelo menos 6 caracteres.",
-        "Password should contain at least one character of each: abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ, 0123456789.": "A palavra-passe deve conter letras maiúsculas, minúsculas e números.",
-        "Auth session missing!": "Sessão expirada. Por favor, solicite um novo link de recuperação.",
-        "Token has expired or is invalid": "O link de recuperação expirou ou é inválido. Solicite um novo.",
-        "New password should be different from the old password.": "A nova palavra-passe deve ser diferente da atual.",
+        "Password should be at least 6 characters.": "Password must be at least 6 characters.",
+        "Password should contain at least one character of each: abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ, 0123456789.": "Password must contain uppercase letters, lowercase letters and numbers.",
+        "Auth session missing!": "Session expired. Please request a new reset link.",
+        "Token has expired or is invalid": "The reset link has expired or is invalid. Please request a new one.",
+        "New password should be different from the old password.": "New password must differ from the current one.",
       };
-      setErrorMsg(messages[error.message] ?? "Ocorreu um erro. Por favor, tente novamente.");
+      setErrorMsg(messages[error.message] ?? "An error occurred. Please try again.");
       return;
     }
 
-    setSuccessMsg("Palavra-passe alterada com sucesso! A redirecionar...");
+    setSuccessMsg("Password updated successfully! Redirecting...");
     setTimeout(() => router.push("/login"), 2000);
   }
 
@@ -83,10 +83,10 @@ export default function ResetPasswordPage() {
             </span>
           </Link>
           <h2 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
-            Nova Palavra-passe
+            New Password
           </h2>
           <p className="text-sm text-[var(--text-muted)] font-normal">
-            Escolha uma nova palavra-passe para a sua conta.
+            Choose a new password for your account.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
 
         {!ready && !successMsg && (
           <div className="rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] p-3 text-xs font-medium text-[var(--text-muted)] text-center">
-            A verificar o link de recuperação...
+            Verifying reset link...
           </div>
         )}
 
@@ -113,11 +113,11 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleReset} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Nova Palavra-passe
+                New Password
               </label>
               <input
                 type="password"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Minimum 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
@@ -127,11 +127,11 @@ export default function ResetPasswordPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Confirmar Palavra-passe
+                Confirm Password
               </label>
               <input
                 type="password"
-                placeholder="Repita a nova palavra-passe"
+                placeholder="Repeat your new password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 disabled={loading}
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
               disabled={loading}
               className="text-sm font-medium text-white px-5 py-2.5 rounded-md bg-[var(--brand)] hover:bg-[var(--brand-hover)] transition-colors w-full cursor-pointer mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? "A guardar..." : "Definir Nova Palavra-passe"}
+              {loading ? "Saving..." : "Set New Password"}
             </button>
           </form>
         )}
@@ -153,7 +153,7 @@ export default function ResetPasswordPage() {
 
         <div className="text-center text-xs font-medium text-[var(--text-muted)]">
           <Link href="/login" className="font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">
-            Voltar ao login
+            Back to sign in
           </Link>
         </div>
       </div>
