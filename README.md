@@ -15,7 +15,7 @@ Travel information is scattered across dozens of websites. **WayFinder** brings 
 
 ## Demo
 
-🔗 **Live app:** _[deploy link coming soon — Vercel]_
+🔗 **Live app:** [way-finder-fawn.vercel.app](https://way-finder-fawn.vercel.app)
 
 ---
 
