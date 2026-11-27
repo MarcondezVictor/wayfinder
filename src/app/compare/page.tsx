@@ -193,20 +193,24 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
  * -------------------------------------------------------------------------- */
 function CompareContent() {
   const searchParams = useSearchParams();
-  const [countryASlug, setCountryASlug] = useState("");
-  const [countryBSlug, setCountryBSlug] = useState("");
+  // Selected countries start from the URL query params (?countryA=&countryB=)
+  const [countryASlug, setCountryASlug] = useState(() => searchParams.get("countryA") ?? "");
+  const [countryBSlug, setCountryBSlug] = useState(() => searchParams.get("countryB") ?? "");
   const [countries, setCountries] = useState<CountrySchema[]>([]);
   const [weights, setWeights] = useState<Record<string, number>>(() =>
       Object.fromEntries(CRITERIA.map((c) => [c.key, 3]))
   );
 
-  // Initialise from URL query params (?countryA=&countryB=)
-  useEffect(() => {
+  // If the query params change while the page is open, follow them. Adjusting state
+  // during render (instead of in an effect) avoids an extra render with stale values.
+  const [prevSearchParams, setPrevSearchParams] = useState(searchParams);
+  if (searchParams !== prevSearchParams) {
+    setPrevSearchParams(searchParams);
     const cA = searchParams.get("countryA");
     const cB = searchParams.get("countryB");
     if (cA) setCountryASlug(cA);
     if (cB) setCountryBSlug(cB);
-  }, [searchParams]);
+  }
 
   // Load all countries from the database
   useEffect(() => {
