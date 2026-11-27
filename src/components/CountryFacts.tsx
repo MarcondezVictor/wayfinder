@@ -52,7 +52,7 @@ export default function CountryFacts({ isoCode }: { isoCode: string }) {
             .then((r) => (r.ok ? r.json() : Promise.reject(new Error("rest-countries"))))
             .then((data) => {
                 if (cancelled) return;
-                // O endpoint pode devolver objeto ou array — normalizamos.
+                // The endpoint may return an object or an array — normalize it.
                 const c = Array.isArray(data) ? data[0] : data;
                 if (!c) throw new Error("vazio");
 

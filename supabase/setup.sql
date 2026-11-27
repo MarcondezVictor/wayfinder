@@ -37,7 +37,7 @@ create policy "Users can update their own profile" on public.profiles
 -- ----------------------------------------------------
 create table if not exists public.user_preferences (
   id uuid references public.profiles(id) on delete cascade primary key,
-  preferred_travel_style text check (preferred_travel_style in ('Turismo', 'Estudos', 'Trabalho', 'Emigração', 'Nómada Digital')),
+  preferred_travel_style text check (preferred_travel_style in ('Tourism', 'Study', 'Work', 'Emigration', 'Digital Nomad')),
   preferred_destinations text[], -- Array of country slugs
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -204,7 +204,7 @@ begin
   
   -- Provision Default Preferences
   insert into public.user_preferences (id, preferred_travel_style, preferred_destinations)
-  values (new.id, 'Turismo', '{}');
+  values (new.id, 'Tourism', '{}');
   
   return new;
 end;

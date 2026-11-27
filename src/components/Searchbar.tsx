@@ -28,7 +28,7 @@ export default function SearchBar({ countries }: SearchBarProps) {
             .slice(0, 8);
     }, [query, countries]);
 
-    // Fecha o dropdown ao clicar fora
+    // Close the dropdown when clicking outside
     useEffect(() => {
         function onClickOutside(e: MouseEvent) {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

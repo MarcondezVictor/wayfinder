@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 
 /* ----------------------------------------------------------------------------
- * Critérios pontuáveis (todos numéricos -> dá para placar e ponderação)
- * O visto fica de fora porque é texto livre; aparece nos painéis como info.
+ * Scored criteria (all numeric -> usable for the scoreboard and weighting)
+ * Visa is left out because it is free text; it shows in the panels as info.
  * -------------------------------------------------------------------------- */
 const dailyCost = (c: CountrySchema) =>
     Math.round(c.avgHotelPrice + c.avgMealPrice * 2 + c.avgTransportCost);
@@ -32,7 +32,7 @@ interface Criterion {
   key: string;
   label: string;
   icon: LucideIcon;
-  better: Better; // "high" = maior é melhor; "low" = menor é melhor
+  better: Better; // "high" = higher is better; "low" = lower is better
   get: (c: CountrySchema) => number;
   format: (c: CountrySchema) => string;
 }
@@ -55,7 +55,7 @@ function winnerOf(crit: Criterion, a: CountrySchema, b: CountrySchema): "A" | "B
   return va < vb ? "A" : "B";
 }
 
-// Normaliza o valor dentro do par para [0,1] (1 = melhor dos dois)
+// Normalizes the value within the pair to [0,1] (1 = better of the two)
 function norm(crit: Criterion, value: number, a: CountrySchema, b: CountrySchema): number {
   const va = crit.get(a);
   const vb = crit.get(b);
@@ -68,7 +68,7 @@ function norm(crit: Criterion, value: number, a: CountrySchema, b: CountrySchema
 }
 
 /* ----------------------------------------------------------------------------
- * Pequenos componentes de apresentação
+ * Small presentational components
  * -------------------------------------------------------------------------- */
 function Best() {
   return (
@@ -140,7 +140,7 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
 
   return (
       <div className="flex animate-fade-in-up flex-col gap-6 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 transition-colors hover:border-[var(--border-strong)]">
-        {/* Cabeçalho */}
+        {/* Header */}
         <div className="flex items-center gap-3">
           <img
               src={`/flags/${country.isoCode.toLowerCase()}.svg`}
@@ -162,7 +162,7 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
 
         <hr className="border-[var(--border-subtle)]" />
 
-        {/* Segurança */}
+        {/* Safety */}
         <div className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-faint)]">Safety</span>
           <div className="flex items-center justify-between text-sm font-medium text-[var(--text-body)]">
@@ -178,7 +178,7 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
 
         <hr className="border-[var(--border-subtle)]" />
 
-        {/* Custo */}
+        {/* Cost */}
         <div className="flex flex-col gap-3">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-faint)]">Costs &amp; Budget</span>
           <div className="flex items-baseline gap-1">
@@ -205,7 +205,7 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
 
         <hr className="border-[var(--border-subtle)]" />
 
-        {/* Clima */}
+        {/* Climate */}
         <div className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-faint)]">Climate</span>
           <div className="text-xs font-semibold text-[var(--text-primary)]">{country.climateType} climate</div>
@@ -223,7 +223,7 @@ function CountryPanel({ label, country, other }: { label: string; country: Count
 }
 
 /* ----------------------------------------------------------------------------
- * Página
+ * Page
  * -------------------------------------------------------------------------- */
 function CompareContent() {
   const searchParams = useSearchParams();
@@ -333,11 +333,11 @@ function CompareContent() {
           </div>
         </section>
 
-        {/* Comparação */}
+        {/* Comparison */}
         <section className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
           {countryA && countryB && analysis ? (
               <>
-                {/* ---- Recomendação por prioridades (sliders) ---- */}
+                {/* ---- Recommendation by priorities (sliders) ---- */}
                 <div className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-sm">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ function CompareContent() {
                   </div>
                 </div>
 
-                {/* ---- Placar (vencedor por critério) ---- */}
+                {/* ---- Scoreboard (winner per criterion) ---- */}
                 <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-sm">
                   <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -425,10 +425,10 @@ function CompareContent() {
                   </div>
                 </div>
 
-                {/* ---- Painéis lado a lado ---- */}
+                {/* ---- Side-by-side panels ---- */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <CountryPanel label="PAÍS A" country={countryA} other={countryB} />
-                  <CountryPanel label="PAÍS B" country={countryB} other={countryA} />
+                  <CountryPanel label="COUNTRY A" country={countryA} other={countryB} />
+                  <CountryPanel label="COUNTRY B" country={countryB} other={countryA} />
                 </div>
               </>
           ) : (

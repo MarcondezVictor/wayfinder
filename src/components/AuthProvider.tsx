@@ -47,8 +47,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Busca profile + preferences. maybeSingle() devolve null (em vez de erro)
-  // quando a linha ainda não existe — evita que a UI rebente para users novos.
+  // Fetches profile + preferences. maybeSingle() returns null (instead of an error)
+  // when the row doesn't exist yet — keeps the UI from breaking for new users.
   const fetchProfileAndPrefs = useCallback(async (userId: string) => {
     try {
       const [{ data: profData }, { data: prefData }] = await Promise.all([
@@ -94,13 +94,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    // Rede de segurança: o spinner NUNCA pode ficar preso para sempre.
-    // Se algo demorar mais de 8s, libertamos a UI na mesma.
+    // Safety net: the spinner must NEVER get stuck forever.
+    // If anything takes longer than 8s, release the UI anyway.
     const safety = setTimeout(() => {
       if (mounted) setLoading(false);
     }, 8000);
 
-    // 1. Sessão inicial (lê dos cookies/storage — corre fora do "lock")
+    // 1. Initial session (read from cookies/storage — runs outside the "lock")
     supabase.auth
         .getSession()
         .then(({ data: { session } }) => {
@@ -120,11 +120,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (mounted) setLoading(false);
         });
 
-    // 2. Mudanças de auth.
-    //    IMPORTANTE: este callback NÃO é async e NÃO faz "await" de queries
-    //    ao Supabase aqui dentro. Fazê-lo causa um DEADLOCK do lock interno
-    //    do GoTrue (auth) e o spinner fica infinito. A query é adiada com
-    //    setTimeout(0) para correr FORA do contexto do lock.
+    // 2. Auth changes.
+    //    IMPORTANT: this callback is NOT async and does NOT "await" Supabase
+    //    queries in here. Doing so DEADLOCKS GoTrue's internal (auth) lock and
+    //    the spinner spins forever. The query is deferred with setTimeout(0)
+    //    so it runs OUTSIDE the lock's context.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Adiar para fora do lock — sem bloquear o estado de loading.
+      // Defer outside the lock — without blocking the loading state.
       setTimeout(() => {
         if (mounted) fetchProfileAndPrefs(activeUser.id);
       }, 0);

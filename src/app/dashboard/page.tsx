@@ -75,7 +75,7 @@ export default function DashboardPage() {
     }
   };
 
-  const travelStyleLabel = preferences?.preferred_travel_style || "🧳 Turismo";
+  const travelStyleLabel = preferences?.preferred_travel_style || "🧳 Tourism";
 
   // Statistics calculation
   const stats = useMemo(() => {

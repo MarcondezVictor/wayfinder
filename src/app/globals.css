@@ -4,7 +4,7 @@
 :root {
   --bg-page:        #121214; /* Fundo grafite/carbono escuro */
   --bg-surface:     #1C1C1E; /* Carbono ligeiramente mais claro */
-  --bg-subtle:      #26262B; /* Intermédio para hover/subtle */
+  --bg-subtle:      #26262B; /* In-between shade for hover/subtle */
 
   --text-primary:   #F3F4F6;
   --text-body:      #E5E7EB;
@@ -73,7 +73,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Animações */
+/* Animations */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }

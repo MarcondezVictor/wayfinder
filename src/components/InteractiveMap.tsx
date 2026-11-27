@@ -56,7 +56,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
   const router = useRouter();
   const [isDark, setIsDark] = useState(false);
 
-  // Acompanha o tema (claro/escuro) e reconstrói o mapa quando muda.
+  // Tracks the theme (light/dark) and rebuilds the map when it changes.
   useEffect(() => {
     const el = document.documentElement;
     const update = () => setIsDark(el.classList.contains("dark"));
@@ -69,9 +69,9 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Cores que contrastam com o fundo conforme o tema
-    const UNAVAILABLE_FILL = isDark ? "#3E4C61" : "#E2E8F0"; // países sem dados
-    const BORDER_COLOR = isDark ? "#101826" : "#CBD5E1";     // fronteiras visíveis
+    // Colours that contrast with the background in each theme
+    const UNAVAILABLE_FILL = isDark ? "#3E4C61" : "#E2E8F0"; // countries without data
+    const BORDER_COLOR = isDark ? "#101826" : "#CBD5E1";     // visible borders
 
     const root = am5.Root.new(chartRef.current);
 
@@ -93,7 +93,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
         })
     );
 
-    // Template base: cor de "indisponível", fronteiras, NÃO interativo por defeito.
+    // Base template: "unavailable" colour, borders, NOT interactive by default.
     polygonSeries.mapPolygons.template.setAll({
       templateField: "polygonSettings",
       fill: am5.color(UNAVAILABLE_FILL),
@@ -102,7 +102,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       interactive: false,
     });
 
-    // Só mostra tooltip se o país tiver dados (countryName). Caso contrário, nada.
+    // Only show a tooltip if the country has data (countryName). Otherwise, nothing.
     polygonSeries.mapPolygons.template.adapters.add("tooltipHTML", (html, target) => {
       const ctx = target.dataItem?.dataContext as { countryName?: string; isoCode?: string } | undefined;
       if (ctx?.countryName && ctx?.isoCode) {
@@ -111,7 +111,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       return "";
     });
 
-    // Hover só afeta os interativos (países com dados)
+    // Hover only affects interactive ones (countries with data)
     polygonSeries.mapPolygons.template.states.create("hover", {
       fillOpacity: 0.75,
     });
@@ -121,7 +121,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
       if (ctx?.slug) router.push(`/country/${ctx.slug}`);
     });
 
-    // Países com dados: cor própria + interativos
+    // Countries with data: own colour + interactive
     const mergedData = COUNTRY_DATA.map((item) => ({
       ...item,
       polygonSettings: {
@@ -132,7 +132,7 @@ export default function InteractiveMap({ countries: _countries = [] }: Interacti
     }));
     polygonSeries.data.setAll(mergedData);
 
-    // Pontos para micro-países (Singapura, Israel)
+    // Points for micro-countries (Singapore, Israel)
     const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
 
     pointSeries.bullets.push((bulletRoot, _series, dataItem) => {

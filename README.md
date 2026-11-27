@@ -143,6 +143,7 @@ SQL migration files live in `supabase/`:
 |---|---|
 | `supabase/setup.sql` | Creates all tables, RLS policies and seed data |
 | `supabase/visa_update.sql` | Updates visa/passport/ETIAS data for all countries |
+| `supabase/english_values.sql` | Converts older databases from Portuguese to English values (continents, travel styles) — not needed for fresh installs |
 
 Run them in order in the **Supabase Dashboard → SQL Editor**.
 

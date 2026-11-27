@@ -39,19 +39,19 @@ export interface Database {
       user_preferences: {
         Row: {
           id: string
-          preferred_travel_style: 'Turismo' | 'Estudos' | 'Trabalho' | 'Emigração' | 'Nómada Digital' | null
+          preferred_travel_style: 'Tourism' | 'Study' | 'Work' | 'Emigration' | 'Digital Nomad' | null
           preferred_destinations: string[] | null
           updated_at: string
         }
         Insert: {
           id: string
-          preferred_travel_style?: 'Turismo' | 'Estudos' | 'Trabalho' | 'Emigração' | 'Nómada Digital' | null
+          preferred_travel_style?: 'Tourism' | 'Study' | 'Work' | 'Emigration' | 'Digital Nomad' | null
           preferred_destinations?: string[] | null
           updated_at?: string
         }
         Update: {
           id?: string
-          preferred_travel_style?: 'Turismo' | 'Estudos' | 'Trabalho' | 'Emigração' | 'Nómada Digital' | null
+          preferred_travel_style?: 'Tourism' | 'Study' | 'Work' | 'Emigration' | 'Digital Nomad' | null
           preferred_destinations?: string[] | null
           updated_at?: string
         }

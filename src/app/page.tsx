@@ -21,7 +21,7 @@ export default function Home() {
   return (
       <main className="w-full min-h-screen bg-[var(--bg-page)] text-[var(--text-body)] flex flex-col items-center">
 
-        {/* HERO + PESQUISA (dropdown ao estilo PlonkIt) */}
+        {/* HERO + SEARCH (PlonkIt-style dropdown) */}
         <section className="relative z-30 w-full flex justify-center bg-[var(--bg-page)]">
           <div className="w-full max-w-3xl px-6 pt-14 pb-6 flex flex-col items-center text-center">
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--text-primary)] mb-2">
@@ -34,7 +34,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* MAPA — grande, a toda a largura e sem borda pesada */}
+        {/* MAP — large, full width, no heavy border */}
         <section className="relative z-10 w-full flex justify-center bg-[var(--bg-page)]">
           <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
             <div
@@ -46,7 +46,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* GRID DE PAÍSES (navegar por continente) */}
+        {/* COUNTRY GRID (browse by continent) */}
         <section className="w-full flex justify-center bg-[var(--bg-surface)] border-t border-[var(--border-subtle)]">
           {loading ? (
               <div className="w-full max-w-7xl px-6 lg:px-8 py-20 text-center text-[var(--text-muted)]">

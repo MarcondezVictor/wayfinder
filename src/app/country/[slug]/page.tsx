@@ -41,7 +41,7 @@ import { getCountryBySlug, getCountries } from "@/lib/db-countries";
 import type { CountrySchema, PointOfInterest } from "@/lib/countries-data";
 import FavoriteButton from "@/components/FavoriteButton";
 /* ----------------------------------------------------------------------------
- * Navegação de secções (cada id corresponde a uma <Section/> com o mesmo id)
+ * Section navigation (each id matches a <Section/> with the same id)
  * -------------------------------------------------------------------------- */
 const SECTIONS: { id: string; label: string; icon: LucideIcon }[] = [
   { id: "overview", label: "Overview", icon: Compass },
@@ -64,7 +64,7 @@ const eur = (value: number) =>
       maximumFractionDigits: 0,
     }).format(value);
 
-// Cor da barra consoante o "score" (0..1). Usa tokens semânticos do design system.
+// Bar colour based on the "score" (0..1). Uses the design system's semantic tokens.
 function toneColor(ratio: number): string {
   if (ratio >= 0.66) return "var(--success)";
   if (ratio >= 0.4) return "var(--accent)";
@@ -72,7 +72,7 @@ function toneColor(ratio: number): string {
 }
 
 /* ----------------------------------------------------------------------------
- * Componentes reutilizáveis (locais a esta página)
+ * Reusable components (local to this page)
  * -------------------------------------------------------------------------- */
 function Card({
                 children,
@@ -189,8 +189,8 @@ function AttractionCard({ poi, iso, index }: { poi: PointOfInterest; iso: string
   return (
       <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)]">
         <div className="relative aspect-[16/10] w-full bg-[var(--bg-subtle)]">
-          {/* Foto local do monumento (ex.: /attractions/pt-1.jpg). Se ainda não
-            existir, usa o imageUrl da BD e, em último caso, o placeholder. */}
+          {/* Local photo of the landmark (e.g. /attractions/pt-1.jpg). If it doesn't
+            exist yet, use the DB imageUrl and, as a last resort, the placeholder. */}
           <img
               src={`/attractions/${iso.toLowerCase()}-${index + 1}.jpg`}
               onError={(e) => { (e.currentTarget as HTMLImageElement).src = poi.imageUrl }}
@@ -209,7 +209,7 @@ function AttractionCard({ poi, iso, index }: { poi: PointOfInterest; iso: string
 }
 
 /* ----------------------------------------------------------------------------
- * Calculadora de custos (estado local: nº de dias)
+ * Cost calculator (local state: number of days)
  * -------------------------------------------------------------------------- */
 function CostCalculator({ country }: { country: CountrySchema }) {
   const dailyEstimate =
@@ -288,7 +288,7 @@ function CostCalculator({ country }: { country: CountrySchema }) {
 }
 
 /* ----------------------------------------------------------------------------
- * Página
+ * Page
  * -------------------------------------------------------------------------- */
 export default function CountryPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -390,7 +390,7 @@ export default function CountryPage() {
     );
   }
 
-  /* ---- Estado: não encontrado ---- */
+  /* ---- State: not found ---- */
   if (!country) {
     return (
         <div className="grid min-h-[60vh] place-items-center px-4">
@@ -414,7 +414,7 @@ export default function CountryPage() {
     );
   }
 
-  /* ---- Conteúdo ---- */
+  /* ---- Content ---- */
   return (
       <div className="w-full bg-[var(--bg-page)]">
         {/* HERO full-bleed */}
@@ -426,8 +426,8 @@ export default function CountryPage() {
                 alt={country.name}
                 className="absolute inset-0 h-full w-full object-cover"
             />
-            {/* Gradiente escuro para legibilidade — sempre escuro, logo texto branco
-              é legível em ambos os temas (não é uma superfície "temável"). */}
+            {/* Dark gradient for legibility — always dark, so white text is readable
+              in both themes (this is not a "themeable" surface). */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
 
             <div className="absolute inset-x-0 bottom-0">
@@ -473,7 +473,6 @@ export default function CountryPage() {
                     </div>
                   </div>
 
-                  {/* Ajusta a prop ao teu FavoriteButton (ex.: country={country}, slug, etc.) */}
                   <div className="shrink-0">
                     <FavoriteButton
                         countryId={country.id}
@@ -486,7 +485,7 @@ export default function CountryPage() {
           </div>
         </header>
 
-        {/* NAV de secções (sticky abaixo da Navbar de 56px) */}
+        {/* Section NAV (sticky below the 56px Navbar) */}
         <nav className="sticky top-14 z-30 border-b border-[var(--border)] bg-[var(--bg-surface)]">
           <div className="mx-auto max-w-5xl px-2 sm:px-4 lg:px-6">
             <ul className="flex gap-1 overflow-x-auto py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -513,9 +512,9 @@ export default function CountryPage() {
           </div>
         </nav>
 
-        {/* CONTEÚDO */}
+        {/* CONTENT */}
         <div className="mx-auto max-w-5xl space-y-16 px-4 py-12 sm:px-6 lg:px-8">
-          {/* Visão geral */}
+          {/* Overview */}
           <Section id="overview" eyebrow="The essentials" title="Overview" icon={Compass}>
             <div className="grid gap-4 lg:grid-cols-3">
               <Card className="lg:col-span-2">
@@ -584,7 +583,7 @@ export default function CountryPage() {
             </div>
           </Section>
 
-          {/* Segurança */}
+          {/* Safety */}
           <Section id="safety" eyebrow="Peace of mind" title="Safety" icon={ShieldCheck}>
             <div className="grid gap-4 sm:grid-cols-2">
               <Card>
@@ -640,7 +639,7 @@ export default function CountryPage() {
             </Card>
           </Section>
 
-          {/* Clima */}
+          {/* Climate */}
           <Section id="climate" eyebrow="When to go" title="Climate" icon={CloudSun}>
             <Card>
               <div className="mb-4 flex items-center gap-2">
@@ -655,7 +654,7 @@ export default function CountryPage() {
             </Card>
           </Section>
 
-          {/* Métricas práticas */}
+          {/* Practical metrics */}
           <Section
               id="metrics"
               eyebrow="On the ground"
@@ -681,7 +680,7 @@ export default function CountryPage() {
             </Card>
           </Section>
 
-          {/* Atrações */}
+          {/* Attractions */}
           <Section id="attractions" eyebrow="Must-see" title="Attractions" icon={Camera}>
             {country.topAttractions.length > 0 ? (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

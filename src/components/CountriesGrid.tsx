@@ -11,12 +11,12 @@ interface CountriesGridProps {
 
 const CONTINENTS = [
     { value: 'All', label: 'All' },
-    { value: 'Europa', label: 'Europe' },
-    { value: 'Ásia', label: 'Asia' },
-    { value: 'África', label: 'Africa' },
-    { value: 'América do Norte', label: 'North America' },
-    { value: 'América do Sul', label: 'South America' },
-    { value: 'Oceânia', label: 'Oceania' },
+    { value: 'Europe', label: 'Europe' },
+    { value: 'Asia', label: 'Asia' },
+    { value: 'Africa', label: 'Africa' },
+    { value: 'North America', label: 'North America' },
+    { value: 'South America', label: 'South America' },
+    { value: 'Oceania', label: 'Oceania' },
 ]
 
 export default function CountriesGrid({ countries, search = '' }: CountriesGridProps) {
@@ -57,7 +57,7 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
                 })}
             </div>
 
-            {/* Grid de Cards ou Estado Vazio */}
+            {/* Card grid or empty state */}
             {displayed.length === 0 ? (
                 <div className="text-center py-20 text-[var(--text-muted)]">
                     <p className="text-lg">No countries found.</p>

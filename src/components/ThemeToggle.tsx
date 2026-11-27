@@ -7,9 +7,9 @@ export default function ThemeToggle() {
     const [isDark, setIsDark] = useState(false);
     const [mounted, setMounted] = useState(false);
 
-    // Inicializa o tema no cliente: lê a preferência guardada e, na ausência
-    // dela, segue a do sistema. Aplica a classe no <html>. (Faz o trabalho que
-    // antes estava no script do layout — agora sem risco para o html/body.)
+    // Initializes the theme on the client: reads the saved preference and, if
+    // there isn't one, follows the system. Applies the class on <html>. (This used
+    // to live in a layout script — now without any risk to html/body.)
     useEffect(() => {
         let dark = false;
         try {
@@ -32,7 +32,7 @@ export default function ThemeToggle() {
         try {
             localStorage.setItem("theme", next ? "dark" : "light");
         } catch {
-            // localStorage indisponível — ignora
+            // localStorage unavailable — ignore
         }
     }
 
