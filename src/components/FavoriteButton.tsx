@@ -13,14 +13,15 @@ interface FavoriteButtonProps {
 export default function FavoriteButton({ countryId, countryName }: FavoriteButtonProps) {
   const { user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [animating, setAnimating] = useState(false);
+  // Which user/country pair has been checked; while it differs from the current
+  // one the button shows its loading state. No user means nothing to check.
+  const checkKey = user && countryId ? `${user.id}:${countryId}` : null;
+  const [checkedKey, setCheckedKey] = useState<string | null>(null);
+  const loading = checkKey !== null && checkedKey !== checkKey;
 
   useEffect(() => {
-    if (!user || !countryId) {
-      setLoading(false);
-      return;
-    }
+    if (!user || !countryId || !checkKey) return;
     let cancelled = false;
     (async () => {
       try {
@@ -34,11 +35,11 @@ export default function FavoriteButton({ countryId, countryName }: FavoriteButto
       } catch (err) {
         console.error("Error checking favorite status:", err);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setCheckedKey(checkKey);
       }
     })();
     return () => { cancelled = true; };
-  }, [user, countryId]);
+  }, [user, countryId, checkKey]);
 
   async function toggleFavorite() {
     if (!user) {
