@@ -173,7 +173,7 @@ Row Level Security is enabled — each user only accesses their own rows in `pro
 
 ## License
 
-[MIT](LICENSE) © 2026 Victor Hugo
+[MIT](LICENSE) © 2026 Victor Hugo Lopes
 
 ---
 
