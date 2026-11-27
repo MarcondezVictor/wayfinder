@@ -18,11 +18,11 @@ Travel information is scattered across dozens of websites. **WayFinder** brings 
 
 ## Screenshots
 
-<!-- Add screenshots to docs/screenshots/ and reference them here -->
-
-![WayFinder screenshots](docs/screenshots/)
-
-> Screenshots folder: `docs/screenshots/` — add images here after deployment.
+| Home | Country page |
+|:---:|:---:|
+| ![Home with the interactive world map and search](docs/screenshots/main.png) | ![Country page for Morocco with sections for visas, safety, costs and climate](docs/screenshots/country.png) |
+| **Compare** | **Dashboard** |
+| ![Comparing Chile and Egypt with priority sliders](docs/screenshots/compare.png) | ![Personal dashboard with saved destinations and stats](docs/screenshots/dashboard.png) |
 
 ---
 
