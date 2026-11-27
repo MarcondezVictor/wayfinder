@@ -14,7 +14,7 @@ export default function Footer() {
           </div>
 
           <p className="text-xs text-[var(--text-muted)]">
-            © 2026 Victor Hugo
+            © 2026 Victor Hugo · Team: Rodrigo Andrade, Eric Cardoso, Martim Marcelino
           </p>
 
           {/* GitHub */}

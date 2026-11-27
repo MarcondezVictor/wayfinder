@@ -174,10 +174,22 @@ Row Level Security is enabled — each user only accesses their own rows in `pro
 
 ---
 
-## Author
+## Team
 
-**Victor Hugo** — [github.com/MarcondezVictor](https://github.com/MarcondezVictor)
+Built as the final group project for the Integrated Project I course at Instituto Politécnico de Tomar.
 
----
+| Member | Role |
+|---|---|
+| **Victor Hugo** — [MarcondezVictor](https://github.com/MarcondezVictor) | Development (all code: frontend, backend, auth, integrations) |
+| **Rodrigo Andrade** | Database design |
+| **Eric Cardoso** — [ericcardoso938](https://github.com/ericcardoso938) | Research and country data |
+| **Martim Marcelino** — [Maarcelino0](https://github.com/Maarcelino0) | UI design |
 
-_Started as the final project for the Integrated Project I course at Instituto Politécnico de Tomar._
+## My contributions
+
+I wrote the entire codebase — every commit in this repository is mine:
+
+- Next.js App Router architecture, all pages and components
+- Supabase integration: authentication (sign up, sign in, password recovery), Row Level Security, queries with a local fallback dataset
+- Interactive world map (amCharts 5), search, country comparison with weighted scoring, trip cost calculator, personal dashboard
+- Dark/light mode and the redesigned UI, implemented from the team's design
