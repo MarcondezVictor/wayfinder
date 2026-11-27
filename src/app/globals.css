@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-/* CSS Variables — suporte nativo a dark mode */
+/* Design tokens. The site is dark-only (<html class="dark"> in the layout). */
 :root {
-  --bg-page:        #121214; /* Fundo grafite/carbono escuro */
-  --bg-surface:     #1C1C1E; /* Carbono ligeiramente mais claro */
+  --bg-page:        #121214; /* Dark graphite page background */
+  --bg-surface:     #1C1C1E; /* Slightly lighter surface */
   --bg-subtle:      #26262B; /* In-between shade for hover/subtle */
 
   --text-primary:   #F3F4F6;
@@ -32,39 +32,6 @@
   --danger-bg:      #450A0A;
   --danger-border:  #7F1D1D;
 }
-
-.dark {
-  --bg-page:        #121214;
-  --bg-surface:     #1C1C1E;
-  --bg-subtle:      #26262B;
-
-  --text-primary:   #F3F4F6;
-  --text-body:      #E5E7EB;
-  --text-muted:     #9CA3AF;
-  --text-faint:     #6B7280;
-
-  --brand:          #2ABFBF;
-  --brand-hover:    #35CFCF;
-  --accent:         #2ABFBF;
-  --accent-hover:   #35CFCF;
-  --accent-subtle:  #0F2A2A;
-  --brand-subtle:   #0F1E33;
-
-  --border:         #2B2B30;
-  --border-subtle:  #1F1F23;
-  --border-strong:  #3F3F46;
-
-  --success:        #34D399;
-  --success-bg:     #064E3B;
-  --success-border: #065F46;
-  --warning:        #FBBF24;
-  --warning-bg:     #451A03;
-  --warning-border: #92400E;
-  --danger:         #F87171;
-  --danger-bg:      #450A0A;
-  --danger-border:  #7F1D1D;
-}
-
 
 body {
   background: var(--bg-page);
