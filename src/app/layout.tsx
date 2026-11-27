@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// Plus Jakarta Sans (variable font, SIL OFL 1.1 — see fonts/OFL.txt), stored in the
+// repo so builds do not depend on Google Fonts. Weights 400–600, as before.
+const jakarta = localFont({
+  src: "./fonts/PlusJakartaSans-Variable.woff2",
+  weight: "400 600",
+  style: "normal",
   variable: "--font-jakarta",
   display: "swap",
 });
