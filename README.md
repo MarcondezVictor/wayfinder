@@ -184,7 +184,7 @@ Built as the final group project for the Integrated Project I course at Polytech
 
 | Member | Role |
 |---|---|
-| **Victor Hugo** — [MarcondezVictor](https://github.com/MarcondezVictor) | Development (all code: frontend, backend, auth, integrations) |
+| **Victor Hugo Lopes** — [MarcondezVictor](https://github.com/MarcondezVictor) | Development (all code: frontend, backend, auth, integrations) |
 | **Rodrigo Andrade** | Database design |
 | **Eric Cardoso** — [ericcardoso938](https://github.com/ericcardoso938) | Research and country data |
 | **Martim Marcelino** — [Maarcelino0](https://github.com/Maarcelino0) | UI design |
