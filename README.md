@@ -121,7 +121,6 @@ src/
 ├── components/
 │   ├── AuthProvider.tsx          # Global auth context
 │   ├── CountriesGrid.tsx         # Country grid with continent filter
-│   ├── CountryFacts.tsx          # Extra facts from restcountries.com API
 │   ├── FavoriteButton.tsx        # Save / unsave a destination
 │   ├── InteractiveMap.tsx        # amCharts world map
 │   ├── Navbar.tsx                # Main navigation
@@ -197,4 +196,4 @@ I wrote the entire codebase — every commit in this repository is mine:
 - Next.js App Router architecture, all pages and components
 - Supabase integration: authentication (sign up, sign in, password recovery), Row Level Security, queries with a local fallback dataset
 - Interactive world map (amCharts 5), search, country comparison with weighted scoring, trip cost calculator, personal dashboard
-- Dark/light mode and the redesigned UI, implemented from the team's design
+- Dark theme and the redesigned UI, implemented from the team's design
