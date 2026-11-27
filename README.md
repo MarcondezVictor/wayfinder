@@ -178,7 +178,7 @@ Row Level Security is enabled — each user only accesses their own rows in `pro
 
 ## Team
 
-Built as the final group project for the Integrated Project I course at Instituto Politécnico de Tomar.
+Built as the final group project for the Integrated Project I course at Polytechnic University of Tomar.
 
 | Member | Role |
 |---|---|
