@@ -62,8 +62,8 @@ Travel information is scattered across dozens of websites. **WayFinder** brings 
 ### Clone & install
 
 ```bash
-git clone https://github.com/MarcondezVictor/WayFinder.git
-cd WayFinder
+git clone https://github.com/MarcondezVictor/wayfinder.git
+cd wayfinder
 npm install
 ```
 

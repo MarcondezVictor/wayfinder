@@ -19,7 +19,7 @@ export default function Footer() {
 
           {/* GitHub */}
           <a
-              href="https://github.com/MarcondezVictor/WayFinder"
+              href="https://github.com/MarcondezVictor/wayfinder"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
