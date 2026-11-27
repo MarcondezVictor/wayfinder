@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getCountries } from "@/lib/db-countries";
 import type { CountrySchema } from "@/lib/countries-data";
+import { dailyCost, norm, winnerOf, type Criterion } from "@/lib/compare";
 import {
   Scale,
   Compass,
@@ -16,27 +17,12 @@ import {
   Trophy,
   Crown,
   SlidersHorizontal,
-  type LucideIcon,
 } from "lucide-react";
 
 /* ----------------------------------------------------------------------------
  * Scored criteria (all numeric -> usable for the scoreboard and weighting)
  * Visa is left out because it is free text; it shows in the panels as info.
  * -------------------------------------------------------------------------- */
-const dailyCost = (c: CountrySchema) =>
-    Math.round(c.avgHotelPrice + c.avgMealPrice * 2 + c.avgTransportCost);
-
-type Better = "high" | "low";
-
-interface Criterion {
-  key: string;
-  label: string;
-  icon: LucideIcon;
-  better: Better; // "high" = higher is better; "low" = lower is better
-  get: (c: CountrySchema) => number;
-  format: (c: CountrySchema) => string;
-}
-
 const CRITERIA: Criterion[] = [
   { key: "cost", label: "Daily cost", icon: Wallet, better: "low", get: dailyCost, format: (c) => `${dailyCost(c)}€/day` },
   { key: "safety", label: "Safety", icon: ShieldCheck, better: "high", get: (c) => c.safetyScore, format: (c) => `${c.safetyScore}/10` },
@@ -46,26 +32,6 @@ const CRITERIA: Criterion[] = [
 ];
 
 const WEIGHT_LABELS = ["Ignore", "Low", "Medium", "Normal", "High", "Max"];
-
-function winnerOf(crit: Criterion, a: CountrySchema, b: CountrySchema): "A" | "B" | "tie" {
-  const va = crit.get(a);
-  const vb = crit.get(b);
-  if (va === vb) return "tie";
-  if (crit.better === "high") return va > vb ? "A" : "B";
-  return va < vb ? "A" : "B";
-}
-
-// Normalizes the value within the pair to [0,1] (1 = better of the two)
-function norm(crit: Criterion, value: number, a: CountrySchema, b: CountrySchema): number {
-  const va = crit.get(a);
-  const vb = crit.get(b);
-  if (crit.better === "high") {
-    const best = Math.max(va, vb);
-    return best > 0 ? value / best : 0.5;
-  }
-  const best = Math.min(va, vb);
-  return value > 0 ? best / value : 0.5;
-}
 
 /* ----------------------------------------------------------------------------
  * Small presentational components
