@@ -1,5 +1,7 @@
 # WayFinder
 
+![WayFinder demo: searching the world map, opening a country page and comparing two countries](docs/screenshots/demo.gif)
+
 ### Explore. Plan. Go.
 
 [![CI](https://github.com/MarcondezVictor/wayfinder/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcondezVictor/wayfinder/actions/workflows/ci.yml)
