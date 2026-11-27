@@ -40,12 +40,15 @@ function Fact({ icon: Icon, label, value }: { icon: LucideIcon; label: string; v
 }
 
 export default function CountryFacts({ isoCode }: { isoCode: string }) {
-    const [facts, setFacts] = useState<Facts | null>(null);
-    const [state, setState] = useState<"loading" | "ok" | "error">("loading");
+    // Result of the last request and the country it belongs to. While it belongs to
+    // another country (or there is none yet) the card shows its loading state.
+    const [result, setResult] = useState<{ isoCode: string; facts: Facts | null } | null>(null);
+    const current = result?.isoCode === isoCode ? result : null;
+    const facts = current?.facts ?? null;
+    const state: "loading" | "ok" | "error" = !current ? "loading" : current.facts ? "ok" : "error";
 
     useEffect(() => {
         let cancelled = false;
-        setState("loading");
 
         const fields = "name,region,subregion,area,demonyms,idd,timezones,car,tld,maps";
         fetch(`https://restcountries.com/v3.1/alpha/${isoCode}?fields=${fields}`)
@@ -62,22 +65,24 @@ export default function CountryFacts({ isoCode }: { isoCode: string }) {
                 const drivingSide =
                     c.car?.side === "left" ? "Left" : c.car?.side === "right" ? "Right" : undefined;
 
-                setFacts({
-                    officialName: c.name?.official,
-                    region: c.region,
-                    subregion: c.subregion,
-                    area: typeof c.area === "number" ? c.area : undefined,
-                    demonym,
-                    callingCode: idd,
-                    timezones: Array.isArray(c.timezones) ? c.timezones : undefined,
-                    drivingSide,
-                    tld: c.tld?.[0],
-                    mapsUrl: c.maps?.googleMaps,
+                setResult({
+                    isoCode,
+                    facts: {
+                        officialName: c.name?.official,
+                        region: c.region,
+                        subregion: c.subregion,
+                        area: typeof c.area === "number" ? c.area : undefined,
+                        demonym,
+                        callingCode: idd,
+                        timezones: Array.isArray(c.timezones) ? c.timezones : undefined,
+                        drivingSide,
+                        tld: c.tld?.[0],
+                        mapsUrl: c.maps?.googleMaps,
+                    },
                 });
-                setState("ok");
             })
             .catch(() => {
-                if (!cancelled) setState("error");
+                if (!cancelled) setResult({ isoCode, facts: null });
             });
 
         return () => {

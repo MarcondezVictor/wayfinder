@@ -291,7 +291,10 @@ export default function CountryPage() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<string>(SECTIONS[0].id);
   const [flagError, setFlagError] = useState(false);
-  const [related, setRelated] = useState<CountrySchema[]>([]);
+  // "Keep exploring" list, stored with the country it was loaded for so a stale
+  // list from the previous country is never shown.
+  const [relatedFor, setRelatedFor] = useState<{ slug: string; list: CountrySchema[] } | null>(null);
+  const related = country && relatedFor?.slug === country.slug ? relatedFor.list : [];
 
   // Load country by slug
   useEffect(() => {
@@ -338,10 +341,7 @@ export default function CountryPage() {
 
   // Load other countries in the same continent for the "Keep exploring" section
   useEffect(() => {
-    if (!country) {
-      setRelated([]);
-      return;
-    }
+    if (!country) return;
     let cancelled = false;
     getCountries()
         .then((all) => {
@@ -349,10 +349,10 @@ export default function CountryPage() {
           const sameContinent = all
               .filter((c) => c.continent === country.continent && c.slug !== country.slug)
               .slice(0, 6);
-          setRelated(sameContinent);
+          setRelatedFor({ slug: country.slug, list: sameContinent });
         })
         .catch(() => {
-          if (!cancelled) setRelated([]);
+          if (!cancelled) setRelatedFor({ slug: country.slug, list: [] });
         });
     return () => {
       cancelled = true;

@@ -26,17 +26,15 @@ export default function DashboardPage() {
   const { user, profile, preferences, loading } = useAuth();
   const router = useRouter();
 
-  const [favLoading, setFavLoading] = useState(true);
   const [favorites, setFavorites] = useState<FavoriteWithCountry[]>([]);
+  // Id of the user whose favorites have been fetched. Favorites are loading while
+  // auth is loading or until the current user's favorites arrive; no user, nothing to load.
+  const [favLoadedFor, setFavLoadedFor] = useState<string | null>(null);
+  const favLoading = loading || (user ? favLoadedFor !== user.id : false);
 
   // Fetch favorites with robust loading state handling
   useEffect(() => {
-    if (loading) return;
-
-    if (!user) {
-      setFavLoading(false);
-      return;
-    }
+    if (loading || !user) return;
 
     const fetchFavorites = async () => {
       try {
@@ -53,7 +51,7 @@ export default function DashboardPage() {
       } catch (err) {
         console.error("Favorites fetch error:", err);
       } finally {
-        setFavLoading(false);
+        setFavLoadedFor(user.id);
       }
     };
 
