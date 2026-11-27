@@ -39,6 +39,7 @@ import {
 
 import { getCountryBySlug, getCountries } from "@/lib/db-countries";
 import type { CountrySchema, PointOfInterest } from "@/lib/countries-data";
+import { toneColor } from "@/lib/compare";
 import FavoriteButton from "@/components/FavoriteButton";
 /* ----------------------------------------------------------------------------
  * Section navigation (each id matches a <Section/> with the same id)
@@ -63,13 +64,6 @@ const eur = (value: number) =>
       currency: "EUR",
       maximumFractionDigits: 0,
     }).format(value);
-
-// Bar colour based on the "score" (0..1). Uses the design system's semantic tokens.
-function toneColor(ratio: number): string {
-  if (ratio >= 0.66) return "var(--success)";
-  if (ratio >= 0.4) return "var(--accent)";
-  return "var(--danger)";
-}
 
 /* ----------------------------------------------------------------------------
  * Reusable components (local to this page)

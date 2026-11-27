@@ -2,6 +2,7 @@
 
 ### Explore. Plan. Go.
 
+[![CI](https://github.com/MarcondezVictor/wayfinder/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcondezVictor/wayfinder/actions/workflows/ci.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase)
@@ -172,7 +173,7 @@ Row Level Security is enabled — each user only accesses their own rows in `pro
 
 ## License
 
-[MIT](LICENSE) © 2026 Victor Hugo
+[MIT](LICENSE) © 2026 Victor Hugo Lopes
 
 ---
 
