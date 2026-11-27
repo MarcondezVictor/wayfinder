@@ -141,7 +141,8 @@ SQL migration files live in `supabase/`:
 
 | File | Purpose |
 |---|---|
-| `supabase/setup.sql` | Creates all tables, RLS policies and seed data |
+| `supabase/setup.sql` | Creates all tables, RLS policies and the sign-up trigger |
+| `supabase/seed.sql` | Inserts the 20 countries with all their data (safe to re-run) |
 | `supabase/visa_update.sql` | Updates visa/passport/ETIAS data for all countries |
 | `supabase/english_values.sql` | Converts older databases from Portuguese to English values (continents, travel styles) — not needed for fresh installs |
 
