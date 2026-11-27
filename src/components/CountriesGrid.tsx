@@ -117,7 +117,7 @@ export default function CountriesGrid({ countries, search = '' }: CountriesGridP
                       🛡 Safety: <strong>{country.safetyScore}/10</strong>
                     </span>
                                         <span className="text-[var(--text-body)] font-semibold">
-                      ~€{costDaily}/dia
+                      ~€{costDaily}/day
                     </span>
                                     </div>
                                 </div>

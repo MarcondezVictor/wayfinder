@@ -266,7 +266,7 @@ export default function DashboardPage() {
                   <span>{stats.cheapestCountryFlag}</span>
                   <span>{stats.cheapestCountryName}</span>
                   <span className="text-sm font-normal text-[var(--text-muted)]">
-                    ({stats.cheapestCost}€/dia)
+                    ({stats.cheapestCost}€/day)
                   </span>
                 </span>
                   </div>

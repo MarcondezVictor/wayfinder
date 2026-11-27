@@ -1,0 +1,25 @@
+# Supabase pauses free-tier projects after about a week without activity,
+# which takes the live site's login and data down. This makes a tiny read
+# request every 3 days so the project never goes idle.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: "0 9 */3 * *" # 09:00 UTC every 3 days
+  workflow_dispatch: # allows running it manually from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/countries?select=slug&limit=1")
+          echo "Supabase responded with HTTP $status"
+          test "$status" = "200"

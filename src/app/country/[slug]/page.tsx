@@ -242,7 +242,7 @@ function CostCalculator({ country }: { country: CountrySchema }) {
                 </div>
             ))}
             <div className="mt-2 flex items-center justify-between border-t border-[var(--border-subtle)] pt-3">
-              <span className="font-semibold text-[var(--text-primary)]">Por dia</span>
+              <span className="font-semibold text-[var(--text-primary)]">Per day</span>
               <span className="text-lg font-bold text-[var(--brand)]">
               {eur(dailyEstimate)}
             </span>
